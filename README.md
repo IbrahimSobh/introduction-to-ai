@@ -4,7 +4,9 @@ A **self-paced online course, completely free**, that explains how modern AI wor
 
 **The certificate is free too.** No sign-up and no fees: pass the final quiz and get a certificate with your name.
 
-**Take the course:** https://ibrahimsobh.github.io/introduction-to-ai/
+## 🚀 Take the course: [ibrahimsobh.github.io/introduction-to-ai](https://ibrahimsobh.github.io/introduction-to-ai/)
+
+👉 **Start learning now:** https://ibrahimsobh.github.io/introduction-to-ai/ · free, no sign-up, runs in your browser
 
 [![Course path: Part A foundations (what is AI, learning from data, neural networks), Part B generative AI in practice (LLMs, prompt engineering, RAG, AI agents, MCP and skills, fine-tuning, limits and risks), the final quiz, then your certificate](images/course-overview.png)](https://ibrahimsobh.github.io/introduction-to-ai/)
 

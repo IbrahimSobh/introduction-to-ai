@@ -668,7 +668,7 @@ const PY = (() => {
 .answerbox .who { display: block; font: 600 11px var(--sans); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 4px; }
 .answerbox.mono { font-family: var(--mono); font-size: .85rem; }
 .flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding-top: 28px; }
-.flow .node { min-width: 0; height: auto; min-height: 46px; padding: 6px 10px; font: 600 13px var(--sans); text-align: center; }
+.flow .node { min-width: 0; height: auto; min-height: 46px; padding: 6px 10px; font: 600 13px var(--sans); text-align: center; flex-direction: column; }
 .flow .arr { color: var(--muted); font: 700 18px var(--sans); }
 .chat { display: grid; gap: 6px; margin-top: 8px; max-height: 300px; overflow: auto; }
 .chat .m { border-radius: 8px; padding: 7px 10px; font-size: .88rem; border: 1px solid var(--border); background: var(--surface); white-space: pre-wrap; }
@@ -1187,6 +1187,8 @@ path = agent.best_path(start)            # after learning`,
   </div>
   </div>
 
+  <p>Training is <b>iterative</b>: 60 small steps, each nudging <code>a</code> and <code>b</code> to reduce the error a little. Lesson 3 shows why this works.</p>
+
   <h3>Predictions can be wrong</h3>
   <ul>
     <li><b>Bad data:</b> errors, missing values or old data teach the model the wrong pattern. Tick "add bad data" above and train again: a few wrong prices pull the whole line off. <i>Garbage in, garbage out.</i></li>
@@ -1437,6 +1439,8 @@ test_error  = model.error(test)      # how well it handles NEW data`;
     <li><b>Backpropagation:</b> work out how much each weight contributed to the error.</li>
     <li><b>Update:</b> nudge every weight a little in the direction that reduces the error (gradient descent). Repeat over many examples, many times.</li>
   </ol>
+  <div class="callout tip"><b>Gradient descent, intuitively:</b> imagine walking down a hill in thick fog. You can't see the valley (the lowest error), but you can feel which way the ground slopes under your feet, so you take a small step downhill, then again, and again.</div>
+  <p>Training is <b>iterative</b>: the network goes through the examples many times, and each time it nudges every parameter a little, until the error stops falling. The small network above needs 1,500 rounds for its 13 parameters. An LLM has billions of parameters and learns from trillions of tokens, which adds up to an enormous number of simple multiplications. <b>GPUs</b> can do thousands of these at the same time (in parallel), which is why training large models needs many powerful GPUs, often running for weeks or months.</p>
   <div class="callout">Modern networks work the same way, just much bigger: <b>deep learning</b> means many layers, and today's large language models have <b>billions</b> of weights (often called <b>parameters</b>).</div>
 
   <h3>Where it shows up</h3>
@@ -1578,6 +1582,18 @@ for epoch in range(1500):
   <h2>4. Generative AI and Large Language Models <small style="color:var(--muted);font-weight:500">(LLMs)</small></h2>
   <p class="lead"><b>Generative AI</b> creates new content (text, images, audio, code) instead of only sorting or predicting labels. A <b>large language model (LLM)</b> is a generative model for text: a very large neural network trained on huge amounts of text to predict what comes next. It is the same idea as the line in lesson 2: a model whose parameters are learned from data, only with <b>billions</b> of them.</p>
   <p>Think of an extremely well-read autocomplete. Your phone's keyboard suggests the next word from a few common phrases. An LLM does the same job at a vastly larger scale, having read a large share of the public internet and many books, so its "next word" can continue a story, answer a question or write working code.</p>
+  <h3>Not only text</h3>
+  <table class="cx">
+    <thead><tr><th>Generative AI creates</th><th>Example request → result</th></tr></thead>
+    <tbody>
+      <tr><td><b>Text</b></td><td>"Summarise this report" → a short summary (LLMs, the focus of this course)</td></tr>
+      <tr><td><b>Code</b></td><td>"Write a function that checks an email address" → working code</td></tr>
+      <tr><td><b>Images</b></td><td>"A cat astronaut, in watercolour" → a picture</td></tr>
+      <tr><td><b>Audio</b></td><td>a written text → natural-sounding speech, or a description → a short piece of music</td></tr>
+      <tr><td><b>Video</b></td><td>"A drone shot over a beach at sunset" → a short clip</td></tr>
+    </tbody>
+  </table>
+  <p>Many models are also <b>multimodal</b>: they can <b>read</b> images, audio or documents, not only create them. The rest of this course focuses on text and LLMs, because most AI tools at work are built on them.</p>
 
   <h3>Tokens and the context window</h3>
   <p>LLMs don't read letters or whole words; they read <b>tokens</b>, common chunks of text such as <code>learn</code>, <code>ing</code> or <code> the</code>. In English, one token is about <b>4 characters</b>, or about ¾ of a word. The <b>context window</b> is the most tokens the model can work with at once: your prompt, the conversation so far, any documents you add, <b>and</b> its answer.</p>
@@ -1607,6 +1623,7 @@ for epoch in range(1500):
   </div>
   </div>
   <style>#llm [aria-pressed="true"] { background: var(--surface-2); border-color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); }</style>
+  <div class="callout"><b>In practice:</b> a 128K-token window holds roughly a 300-page book. In a very long chat, the earliest messages may be dropped or summarised to make room, which is why a model can "forget" what you said at the start. Tokens are also how AI use is usually measured and billed.</div>
 
   <h3>How an LLM is made: pre-training, then tuning</h3>
   <div class="flow" style="padding-top:6px">
@@ -1621,6 +1638,13 @@ for epoch in range(1500):
     <li><b>Instruction tuning</b> trains it further on examples of instructions paired with good responses, so it learns to act as an assistant.</li>
     <li><b>Preference tuning</b> (for example <b>RLHF</b>, reinforcement learning from human feedback) uses people's ratings of answers to make it more helpful, honest and safe.</li>
   </ul>
+  <table class="cx">
+    <thead><tr><th></th><th>Trained to</th><th>You type: "What is the capital of France?"</th></tr></thead>
+    <tbody>
+      <tr><td><b>Base model</b></td><td>predict the next word</td><td>"What is the capital of Germany? What is the capital of Italy?…" (it just continues the text)</td></tr>
+      <tr><td><b>Instruction-tuned model</b></td><td>answer questions and follow instructions</td><td>"The capital of France is Paris."</td></tr>
+    </tbody>
+  </table>
 
   <h3>The Transformer, at a high level</h3>
   <p>Most LLMs are built on the <b>Transformer</b> architecture (introduced in 2017). Its key idea is <b>attention</b>: when processing each token, the model looks at all the other tokens in the context and decides which ones matter most for understanding it.</p>
@@ -1642,6 +1666,16 @@ for epoch in range(1500):
 
   <h3>Next-token prediction and temperature</h3>
   <p>An LLM writes one token at a time. At each step it gives every possible next token a <b>probability</b>, <b>picks one</b>, adds it to the text, and repeats. Usually it <b>samples</b> (picks at random, weighted by probability), which is why the same prompt can give different answers. <b>Temperature</b> controls how adventurous the picks are: low temperature almost always takes the most likely token; high temperature spreads the chances out.</p>
+  <p>Think of asking two friends to finish a sentence. The careful one always picks the obvious word. The adventurous one surprises you: sometimes brilliantly, sometimes oddly. Low temperature is the careful friend; high temperature is the adventurous one.</p>
+  <table class="cx">
+    <thead><tr><th>Temperature</th><th>Behaviour</th><th>Use it for</th></tr></thead>
+    <tbody>
+      <tr><td><b>Low</b> (about 0–0.3)</td><td>consistent: picks the most likely tokens</td><td>facts, code, extracting data, classifying</td></tr>
+      <tr><td><b>Medium</b> (about 0.5–0.8)</td><td>balanced</td><td>everyday chat, explanations, emails</td></tr>
+      <tr><td><b>High</b> (about 1 or more)</td><td>varied and surprising, but can drift or make more mistakes</td><td>brainstorming, story ideas, slogans, poems</td></tr>
+    </tbody>
+  </table>
+  <p>Chat apps choose the temperature for you. Developers set it when they build their own apps on top of an LLM.</p>
   <div class="w-gen">
   <div class="grid2">
     <div class="card">
@@ -1666,7 +1700,6 @@ for epoch in range(1500):
   <ul>
     <li>Chat assistants, writing and summarising, translation, and coding assistants.</li>
     <li>Image and video generators work on the same "generate step by step" idea with different model types.</li>
-    <li>Low temperature for facts and code (consistent answers); higher for brainstorming and creative writing.</li>
   </ul>
   <div class="quizbox"></div>
 </section>
@@ -1787,7 +1820,7 @@ print(prompt)`, "generate.py");
       order.forEach(([w, p]) => { const i = DS.el("i", { style: { width: "0%" } }); bars[w] = i; candEl.append(DS.el("span", { class: "w" }, w === "." ? "." : " " + w), DS.el("div", { class: "b" }, i), DS.el("span", { class: "p" }, (p * 100).toFixed(0) + "%")); });
       cp.hl(3, 4);
       await DS.sleep(30); order.forEach(([w, p]) => (bars[w].style.width = (p * 100).toFixed(1) + "%"));
-      g$(".status").innerHTML = T === 0 ? "Temperature 0: always take the single most likely token." : `Temperature ${T}: ${T < 0.5 ? "the top token dominates" : T > 1 ? "chances are spread out, so unlikely tokens get picked more" : "likely tokens usually win, but not always"}.`;
+      g$(".status").innerHTML = T === 0 ? "Temperature 0: always take the single most likely token. Same story every time: good for facts and code." : `Temperature ${T}: ${T < 0.5 ? "the top token dominates. Consistent: good for facts and code" : T >= 1 ? "chances are spread out, so unlikely tokens get picked more. Varied: good for ideas, but it may stop making sense" : "likely tokens usually win, but not always. Balanced: good for everyday chat"}.`;
       await DS.wait(0.9);
       const k = pick(probs, Math.random());
       bars[words[k]].classList.add("pick");
@@ -1800,7 +1833,7 @@ print(prompt)`, "generate.py");
     }
     cp.hl(7);
     DS.log(g$(".log"), `T=${T}: "a${DS.esc(out)}"`, "ok");
-    g$(".status").innerHTML = "Done. Press <b>Generate</b> again: at temperature 0 you get the same story every time; at higher temperatures it changes.";
+    g$(".status").innerHTML = "Done. Press <b>Generate</b> again: at temperature 0 you get the same story every time (good for facts and code); at higher temperatures it changes (good for ideas and creative writing).";
   }
   g$(".gn-t").addEventListener("input", () => (g$(".gn-tv").textContent = (+g$(".gn-t").value).toFixed(1)));
   g$(".gn-go").onclick = () => DS.run(gr, generate);
@@ -1961,7 +1994,7 @@ print(prompt)`, "generate.py");
   </ul>
 
   <h3>Embeddings: meaning as numbers</h3>
-  <p>An <b>embedding model</b> turns a piece of text into a list of numbers (a <b>vector</b>) that captures its <b>meaning</b>. Texts with similar meanings get vectors that point in similar directions, even if they share no words. We measure how close two vectors are, usually with <b>cosine similarity</b> (1 = same direction).</p>
+  <p>An <b>embedding model</b> turns a piece of text into a list of numbers (a <b>vector</b>) that captures its <b>meaning</b>. Texts with similar meanings get vectors that point in similar directions, even if they share no words. We measure how close two vectors are, usually with <b>cosine similarity</b> (1 = same direction). That's why a search for "cheap flights" can find a page about "low-cost airfares", even though they share no words.</p>
   <div class="w-emb">
   <div class="grid2">
     <div class="card">
@@ -1983,6 +2016,7 @@ print(prompt)`, "generate.py");
 
   <h3>Chunking and the vector database</h3>
   <p>Documents are usually too long to embed or retrieve as one piece, so they're split into <b>chunks</b> (for example a few paragraphs each, often with a little overlap). Each chunk is embedded and stored in a <b>vector database</b>, which can quickly find the chunks closest to any question's vector.</p>
+  <p><b>Size matters:</b> chunks that are too big bring in unrelated text and waste the context window; chunks that are too small lose meaning, like cutting a recipe in the middle of a step. A few paragraphs, with a little overlap, is a common starting point.</p>
 
   <h3>The flow: retrieve, augment, generate</h3>
   <div class="w-rag">
@@ -2217,6 +2251,17 @@ answer = llm(prompt)`, "rag.py");
     </tbody>
   </table>
   <p>Short-term memory is limited by the context window and is gone when the session ends. Long-term memory is usually stored and fetched just like RAG.</p>
+
+  <h3>Chat, RAG or agent?</h3>
+  <table class="cx">
+    <thead><tr><th>What you need</th><th>Use</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>an answer from general knowledge</td><td><b>plain chat</b></td><td>"Explain what an API is."</td></tr>
+      <tr><td>answers from your own documents</td><td><b>RAG</b> (lesson 6)</td><td>"How many vacation days do I get?"</td></tr>
+      <tr><td>several steps, or real actions</td><td><b>an agent</b></td><td>"Find the three cheapest flights, check my calendar and draft an email."</td></tr>
+    </tbody>
+  </table>
+  <p>Agents are slower and cost more, so use the simplest option that does the job.</p>
 
   <h3>Where it shows up</h3>
   <ul>
@@ -2495,7 +2540,7 @@ while steps < 10:
   <ul>
     <li>Classifying support tickets into a company's own categories, in a fixed format, at large volume.</li>
     <li>Matching a brand's writing style, or a specialised medical or legal vocabulary.</li>
-    <li>Training a small, cheap model to do one task as well as a big general one. Efficient methods such as <b>LoRA</b> update only a small part of the model, which keeps fine-tuning affordable.</li>
+    <li>Training a small, cheap model to do one task as well as a big general one. Efficient methods update only a small part of the model (for example LoRA), which keeps fine-tuning affordable.</li>
   </ul>
   <div class="quizbox"></div>
 </section>
@@ -2698,8 +2743,10 @@ if reply.tool_call and is_risky(reply.tool_call):
     ["Foundations", "#data", "Training, prediction", "finding the best parameter values from data; using the trained model on new cases"],
     ["Foundations", "#data", "Overfitting / underfitting", "memorising the training data / too simple to learn the pattern"],
     ["Foundations", "#nn", "Neural network, weights, biases", "layers of neurons; its parameters, adjusted during training"],
+    ["Foundations", "#nn", "Gradient descent", "training step by step: nudge every parameter a little to reduce the error, many times"],
     ["Foundations", "#nn", "Deep learning", "neural networks with many layers"],
     ["LLMs", "#llm", "Generative AI", "AI that creates new text, images, audio or code"],
+    ["LLMs", "#llm", "Multimodal model", "a model that can read or create more than one kind of data: text, images, audio"],
     ["LLMs", "#llm", "Large language model (LLM)", "a huge neural network trained to predict the next token"],
     ["LLMs", "#llm", "Token", "a chunk of text; about 4 characters in English"],
     ["LLMs", "#llm", "Context window", "the most tokens a model can handle at once, answer included"],

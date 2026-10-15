@@ -18,7 +18,7 @@ A **self-paced online course, completely free**, that explains how modern AI wor
 
 **Part B · Generative AI in practice** (the main focus, about 80%)
 
-4. **Generative AI and LLMs**: tokens and the context window, pre-training and instruction tuning, the Transformer, next-token prediction and temperature
+4. **Generative AI and LLMs**: what generative AI can create (text, code, images, audio, video), tokens and the context window, pre-training and instruction tuning, the Transformer, next-token prediction and temperature
 5. **Prompt Engineering**: clear instructions and roles, context and examples (few-shot), step-by-step thinking, structured output
 6. **RAG**: why LLMs need external knowledge, embeddings, chunking and vector databases, and the retrieve → augment → generate flow
 7. **AI Agents**: tools and tool calling, reasoning and planning, the think → act → observe loop, short- and long-term memory

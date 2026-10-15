@@ -770,7 +770,16 @@ const AI = (() => {
     #intro .map { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 4fr); gap: 12px; }
     #intro .map h4 { margin: 0 0 6px; font-size: .9rem; color: var(--text-2); }
     @media (max-width: 700px) { #intro .map { grid-template-columns: minmax(0, 1fr); } }
+    #intro .learn { list-style: none; margin: 8px 0 18px; padding: 0; display: grid; gap: 8px; }
+    #intro .learn li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: start; }
+    #intro .learn li span { font-size: 1.15rem; line-height: 1.5; }
   </style>
+  <h3>What you'll learn</h3>
+  <ul class="learn">
+    <li><span aria-hidden="true">🧠</span><div>How machines learn from data, from a simple line to neural networks and LLMs.</div></li>
+    <li><span aria-hidden="true">✨</span><div>How to use generative AI well: prompting, context engineering, RAG, agents, MCP and fine-tuning.</div></li>
+    <li><span aria-hidden="true">⚠️</span><div>When AI can be wrong, its main risks, and when a person must check it.</div></li>
+  </ul>
   <div class="pillars">
     <div class="pillar"><div class="p-ico" aria-hidden="true">📘</div><h3>Theory</h3><p>The main ideas behind modern AI in plain words, with everyday examples, simple diagrams, and when to use what.</p></div>
     <div class="pillar"><div class="p-ico" aria-hidden="true">🛠️</div><h3>Practice</h3><p>Interactive demos: train a model, watch a network learn, sample tokens, build a prompt, run RAG and an agent loop. A quiz in every lesson.</p></div>
@@ -2921,6 +2930,7 @@ if reply.tool_call and is_risky(reply.tool_call):
   ];
   const fq = document.getElementById("finalQuizBox");
   const certBox = document.getElementById("certBox");
+  const REPO = "https://github.com/IbrahimSobh/introduction-to-ai";
   const PASS = 0.8;
   let result = { correct: 0, answered: 0, total: finalQs.length };
   const totalQs = finalQs.length;
@@ -2991,7 +3001,11 @@ if reply.tool_call and is_risky(reply.tool_call):
     const wrap = DS.el("div", { class: "cert-wrap" }, cert,
       DS.el("div", { class: "controls", style: { justifyContent: "center", marginTop: "14px" } },
         DS.el("button", { class: "always", onclick: () => printCert(cert) }, "Print / Save as PDF"),
-        DS.el("button", { class: "always", onclick: () => downloadCert(name, correct, pct, date) }, "Download as image")));
+        DS.el("button", { class: "always", onclick: () => downloadCert(name, correct, pct, date) }, "Download as image")),
+      DS.el("p", { class: "cert-star", style: { textAlign: "center", margin: "14px 0 0", color: "var(--text-2)" } },
+        "🎉 Congratulations! If you enjoyed the course, ",
+        DS.el("a", { href: REPO, target: "_blank", rel: "noopener" }, "⭐ star it on GitHub"),
+        " and share it with others."));
     certBox.append(wrap);
   }
 
@@ -3101,7 +3115,7 @@ if reply.tool_call and is_risky(reply.tool_call):
 
 
 
-<footer>Introduction to AI — a free, self-paced course. The code panels are short, readable sketches of how each idea is used in practice. Single self-contained file; works offline.</footer>
+<footer>Introduction to AI — a free, self-paced course by Ibrahim Sobh. The code panels are short, readable sketches of how each idea is used in practice. Single self-contained file; works offline.<br><a href="https://github.com/IbrahimSobh/introduction-to-ai" target="_blank" rel="noopener">Source on GitHub</a> · ⭐ Star the repo if you found it useful.</footer>
 </main>
 </div>
 

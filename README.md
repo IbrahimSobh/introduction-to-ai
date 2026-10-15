@@ -54,15 +54,19 @@ It isn't aimed at ML engineers or data scientists looking for maths, real traini
 
 [![AI agents lesson: the think, act, observe loop with Observe highlighted, long-term memories recalled, the tool call and its result in the conversation, next to the agent loop code with the observe lines highlighted](images/agent-lesson.png)](https://ibrahimsobh.github.io/introduction-to-ai/#agents)
 
-**How long it takes:** about 4–5 hours if you're new to the topic, or about 2–3 hours if you already work with technology.
+## How long it takes
+
+About 4 hours if you're new to the topic, or about 2 hours if you already work with technology.
 
 | Part | New to the topic | Already work in tech |
 |---|---|---|
-| Part A: each of lessons 1–3 | 15–20 min | about 10 min |
-| Part B: each of lessons 4–10 | 25–35 min | about 15 min |
+| Part A: 3 lessons | 3 × 15 min = 45 min | 3 × 8 min = 24 min |
+| Part B: 7 lessons | 7 × 25 min = 175 min | 7 × 13 min = 91 min |
 | AI glossary review | 10 min | 5 min |
 | Final quiz and certificate | 15 min | 10 min |
-| **Total** | **about 4–5 hours** | **about 2–3 hours** |
+| **Total** | **245 min ≈ 4 hours** | **130 min ≈ 2 hours** |
+
+## Final quiz and certificate
 
 Finish with the final quiz: 12 questions on the main concepts. Score 10 of 12 or more (80%) to get a certificate with your name, which you can download as an image or save as a PDF and share.
 

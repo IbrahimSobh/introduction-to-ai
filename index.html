@@ -1249,13 +1249,14 @@ price = a * 120 + b                  # predict a new house`;
   const plotEl = $(".hs-plot"), statusEl = $(".status"), logEl = $(".log");
   const say = h => (statusEl.innerHTML = h);
   const R = AI.rng(12);
-  const clean = [...Array(18)].map(() => { const s = 40 + R() * 170; return [s, 1.8 * s + 45 + AI.gauss(R) * 30]; });
+  const clean = [...Array(18)].map(() => { const s = 40 + R() * 170; return [s, 1.8 * s + 45 + AI.gauss(R) * 170]; });
   const BAD = [[150, 40], [180, 55], [200, 70]];
-  let w = 0, b = 0, P, line, predG, trained = false;
+  let w = 0, b = 0, P, line, predG, resG, showRes = false, trained = false;
   const data = () => clean.concat($(".hs-bad").checked ? BAD : []);
   function draw() {
     plotEl.innerHTML = "";
     P = AI.plot(plotEl, { w: 520, h: 300, x0: 0, x1: 230, y0: 0, y1: 500, xl: "size (m²)", yl: "price ($1000s)", xt: [0, 50, 100, 150, 200], yt: [0, 100, 200, 300, 400, 500] });
+    resG = DS.svg("g"); P.g.append(resG);
     clean.forEach(([x, y]) => P.g.append(DS.svg("circle", { class: "pt a", cx: P.X(x), cy: P.Y(y), r: 6 })));
     if ($(".hs-bad").checked) BAD.forEach(([x, y]) => P.g.append(DS.svg("circle", { class: "pt bad", cx: P.X(x), cy: P.Y(y), r: 7 })));
     line = DS.svg("line", { class: "fit" }); P.g.append(line);
@@ -1266,12 +1267,15 @@ price = a * 120 + b                  # predict a new house`;
   function setLine() {
     line.setAttribute("x1", P.X(0)); line.setAttribute("y1", P.Y(clampY(b)));
     line.setAttribute("x2", P.X(230)); line.setAttribute("y2", P.Y(clampY(w * 230 + b)));
+    // errors: the gap between each sale and the line
+    resG.innerHTML = "";
+    if (showRes) data().forEach(([x, y]) => resG.append(DS.svg("line", { x1: P.X(x), x2: P.X(x), y1: P.Y(y), y2: P.Y(clampY(w * x + b)), stroke: "var(--hot)", "stroke-width": 1.5, "stroke-dasharray": "3 3", opacity: 0.7 })));
   }
   const mae = () => { const d = data(); return d.reduce((s, [x, y]) => s + Math.abs(w * x + b - y), 0) / d.length; };
   function showPar() { const sp = $(".hs-par span"); if (sp) sp.textContent = `a = ${w.toFixed(2)} · b = ${Math.round(b)}`; }
   function showErr() { showPar(); const e = mae(); $(".hs-err").style.width = Math.min(100, e / 3) + "%"; $(".hs-errv").textContent = "$" + Math.round(e) + "k"; }
   async function train() {
-    draw(); w = 0; b = 0; setLine(); showErr();
+    showRes = true; draw(); w = 0; b = 0; setLine(); showErr();
     cp.hl(3); say("Start with a bad guess for the parameters: <b>a = 0, b = 0</b>, so every house costs $0. Very wrong!"); await DS.wait(1.1);
     const d = data(), n = d.length;
     // Gradient descent on squared error. Sizes are centred on their mean (mx) so
@@ -1289,7 +1293,7 @@ price = a * 120 + b                  # predict a new house`;
     setLine(); showErr(); trained = true;
     DS.log(logEl, `trained: a = ${w.toFixed(2)}, b = ${Math.round(b)}`, "ok");
     say($(".hs-bad").checked ? "Trained, but the three wrong prices (red) pulled the line down: the model learned a <b>wrong relation</b>. Untick bad data and train again."
-                             : `Trained: the best parameters are <b>a = ${w.toFixed(2)}</b> and <b>b = ${Math.round(b)}</b>, so price ≈ ${w.toFixed(2)} × size + ${Math.round(b)} (in $1000s). Now try <b>Predict</b>.`);
+                             : `Trained: the best parameters are <b>a = ${w.toFixed(2)}</b> and <b>b = ${Math.round(b)}</b>, so price ≈ ${w.toFixed(2)} × size + ${Math.round(b)} (in $1000s). The line can't pass through every sale, because real prices also depend on location, condition and more. The dashed gaps are the errors; training made them as small as possible overall. Now try <b>Predict</b>.`);
   }
   async function predict() {
     if (!trained) { say("Train the model first, so it has learned the relation."); return; }
@@ -1298,14 +1302,14 @@ price = a * 120 + b                  # predict a new house`;
     predG.append(DS.svg("line", { class: "grid", x1: P.X(s), x2: P.X(s), y1: P.Y(0), y2: P.Y(clampY(p)), "stroke-dasharray": "4 4" }),
                  DS.svg("circle", { class: "pt c", cx: P.X(s), cy: P.Y(clampY(p)), r: 9 }));
     cp.hl(8);
-    say(`A ${s} m² house: ${w.toFixed(2)} × ${s} + ${Math.round(b)} ≈ <b>$${Math.round(+w.toFixed(2) * s + Math.round(b))}k</b>. The model never saw this house; it used the parameters it learned.`);
+    say(`A ${s} m² house: ${w.toFixed(2)} × ${s} + ${Math.round(b)} ≈ <b>$${Math.round(+w.toFixed(2) * s + Math.round(b))}k</b>. The model never saw this house; it used the parameters it learned. It is a best guess: like the sales above, the real price may be some way above or below it (about $${Math.round(mae())}k on average).`);
     DS.log(logEl, `predict(${s} m²) ≈ $${Math.round(+w.toFixed(2) * s + Math.round(b))}k`, "ok");
   }
   $(".hs-size").addEventListener("input", () => { $(".hs-sv").textContent = $(".hs-size").value + " m²"; });
   $(".hs-train").onclick = () => DS.run(root, train);
   $(".hs-pred").onclick = () => DS.run(root, predict);
-  $(".hs-reset").onclick = () => { if (!root.dataset.busy) { w = 0; b = 0; trained = false; draw(); showErr(); cp.clear(); say("Press <b>Train</b> to fit a line to the house sales."); } };
-  $(".hs-bad").addEventListener("change", () => { if (!root.dataset.busy) { trained = false; w = 0; b = 0; draw(); showErr(); say($(".hs-bad").checked ? "Three sales with wrong prices (red) were added. Press <b>Train</b> to see what happens." : "Bad data removed. Press <b>Train</b>."); } });
+  $(".hs-reset").onclick = () => { if (!root.dataset.busy) { w = 0; b = 0; trained = false; showRes = false; draw(); showErr(); cp.clear(); say("Press <b>Train</b> to fit a line to the house sales."); } };
+  $(".hs-bad").addEventListener("change", () => { if (!root.dataset.busy) { trained = false; showRes = false; w = 0; b = 0; draw(); showErr(); say($(".hs-bad").checked ? "Three sales with wrong prices (red) were added. Press <b>Train</b> to see what happens." : "Bad data removed. Press <b>Train</b>."); } });
   draw(); showErr(); say("Each blue dot is a house that sold. Press <b>Train</b> to fit a line to the sales.");
 
   /* ---------- over/underfitting ---------- */

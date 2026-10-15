@@ -1153,8 +1153,16 @@ path = agent.best_path(start)            # after learning`,
 <!-- ===================================================================== 2 -->
 <section class="section" id="data" data-title="2. Learning from Data">
   <h2>2. Learning from Data <small style="color:var(--muted);font-weight:500">(models find relations)</small></h2>
-  <p class="lead">A <b>model</b> is a mathematical function with adjustable settings. <b>Training</b> means adjusting those settings until the model's outputs match the examples, so it can make predictions for new cases.</p>
+  <p class="lead">A <b>model</b> is a formula with <b>parameters</b>: numbers that set its exact shape. <b>Training</b> means finding the parameter values that make the model's outputs match the examples, so it can make predictions for new cases.</p>
   <p>An estate agent who has seen hundreds of sales can guess a new house's price from its size. They learned the relation from experience. A model does the same from data: it finds the pattern, then uses it on houses it has never seen. Because a price is a number, this is <b>regression</b> (lesson 1).</p>
+  <div class="callout"><b>What is a model?</b> Take the simplest one, a straight line: <code>y = a·x + b</code>. Here <code>x</code> is the house size and <code>y</code> is its price.
+    <ul style="margin:6px 0 0">
+      <li><b>Model:</b> the shape we assume, here a straight line.</li>
+      <li><b>Parameters:</b> <code>a</code>, the slope (how much the price rises per extra m²), and <code>b</code>, where the line starts.</li>
+      <li><b>Training:</b> find the values of <code>a</code> and <code>b</code> that make the line fit the data best.</li>
+      <li><b>Prediction:</b> put a new size into the trained formula to get a price.</li>
+    </ul>
+  </div>
 
   <div class="w-house">
   <div class="grid2">
@@ -1170,6 +1178,7 @@ path = agent.best_path(start)            # after learning`,
       </div>
       <div class="viz" style="min-height:300px"><span class="caption">House sales · size vs price</span><div class="hs-plot" style="padding-top:18px"></div>
         <div class="meter"><span>Average error</span><div class="bar"><i class="hot hs-err"></i></div><b class="hs-errv">—</b></div>
+        <div class="hs-par" style="font:600 .85rem var(--mono);color:var(--text-2);padding:4px 12px 8px">price = a × size + b · <span style="color:var(--hot)">a = 0.00 · b = 0</span></div>
       </div>
       <div class="status"></div>
       <div class="log"></div>
@@ -1187,6 +1196,7 @@ path = agent.best_path(start)            # after learning`,
 
   <h3>Overfitting and underfitting</h3>
   <p>To check a model honestly, we keep some data aside as a <b>test set</b> that it never sees during training. A good model does well on <b>both</b> training and test data. Pick the model's complexity below and compare the two errors.</p>
+  <p>Complexity here means the number of <b>parameters</b>. Complexity 1 is the straight line, with 2 parameters (<code>a</code> and <code>b</code>); complexity 9 is a curve with 10. More parameters make a more flexible model, which can fit the real pattern, or the noise.</p>
   <div class="w-fit">
   <div class="grid2">
     <div class="card">
@@ -1229,12 +1239,12 @@ path = agent.best_path(start)            # after learning`,
   const $ = s => root.querySelector(s);
   const SRC = `sizes  = [52, 75, 96, 120, ...]     # inputs: m²
 prices = [140, 175, 215, 255, ...]   # answers: $1000s
-w, b = 0, 0                          # start with a bad guess
+a, b = 0, 0                          # parameters: a bad first guess
 for step in range(60):
-    guess = w * sizes + b            # the model's predictions
+    guess = a * sizes + b            # the model: y = a·x + b
     error = guess - prices           # how wrong is it?
-    w, b = adjust(w, b, error)       # nudge to reduce the error
-price = w * 120 + b                  # predict a new house`;
+    a, b = adjust(a, b, error)       # nudge a, b to reduce the error
+price = a * 120 + b                  # predict a new house`;
   const cp = DS.code($(".code"), SRC, "house_prices.py");
   const plotEl = $(".hs-plot"), statusEl = $(".status"), logEl = $(".log");
   const say = h => (statusEl.innerHTML = h);
@@ -1258,10 +1268,11 @@ price = w * 120 + b                  # predict a new house`;
     line.setAttribute("x2", P.X(230)); line.setAttribute("y2", P.Y(clampY(w * 230 + b)));
   }
   const mae = () => { const d = data(); return d.reduce((s, [x, y]) => s + Math.abs(w * x + b - y), 0) / d.length; };
-  function showErr() { const e = mae(); $(".hs-err").style.width = Math.min(100, e / 3) + "%"; $(".hs-errv").textContent = "$" + Math.round(e) + "k"; }
+  function showPar() { const sp = $(".hs-par span"); if (sp) sp.textContent = `a = ${w.toFixed(2)} · b = ${Math.round(b)}`; }
+  function showErr() { showPar(); const e = mae(); $(".hs-err").style.width = Math.min(100, e / 3) + "%"; $(".hs-errv").textContent = "$" + Math.round(e) + "k"; }
   async function train() {
     draw(); w = 0; b = 0; setLine(); showErr();
-    cp.hl(3); say("Start with a flat guess: every house costs $0. Very wrong!"); await DS.wait(1.1);
+    cp.hl(3); say("Start with a bad guess for the parameters: <b>a = 0, b = 0</b>, so every house costs $0. Very wrong!"); await DS.wait(1.1);
     const d = data(), n = d.length;
     // Gradient descent on squared error. Sizes are centred on their mean (mx) so
     // slope and height can be nudged independently with stable step sizes.
@@ -1273,12 +1284,12 @@ price = w * 120 + b                  # predict a new house`;
       for (const [x, y] of d) { const e = w * (x - mx) + c - y; gw += e * (x - mx); gc += e; }
       w -= 0.25 / vx * gw / n; c -= 0.25 * gc / n;
       b = c - w * mx;
-      if (step % 3 === 0) { setLine(); showErr(); cp.hl(5, 6, 7); say(`Step ${step + 1}: compare guesses with real prices, then nudge the line to reduce the error.`); await DS.wait(0.18); }
+      if (step % 3 === 0) { setLine(); showErr(); cp.hl(5, 6, 7); say(`Step ${step + 1}: compare guesses with real prices, then nudge <b>a</b> and <b>b</b> to reduce the error.`); await DS.wait(0.18); }
     }
     setLine(); showErr(); trained = true;
-    DS.log(logEl, `trained: price ≈ ${w.toFixed(2)} × size + ${Math.round(b)}`, "ok");
+    DS.log(logEl, `trained: a = ${w.toFixed(2)}, b = ${Math.round(b)}`, "ok");
     say($(".hs-bad").checked ? "Trained, but the three wrong prices (red) pulled the line down: the model learned a <b>wrong relation</b>. Untick bad data and train again."
-                             : `Trained: price ≈ <b>${w.toFixed(2)} × size + ${Math.round(b)}</b> (in $1000s). The line follows the data. Now try <b>Predict</b>.`);
+                             : `Trained: the best parameters are <b>a = ${w.toFixed(2)}</b> and <b>b = ${Math.round(b)}</b>, so price ≈ ${w.toFixed(2)} × size + ${Math.round(b)} (in $1000s). Now try <b>Predict</b>.`);
   }
   async function predict() {
     if (!trained) { say("Train the model first, so it has learned the relation."); return; }
@@ -1287,8 +1298,8 @@ price = w * 120 + b                  # predict a new house`;
     predG.append(DS.svg("line", { class: "grid", x1: P.X(s), x2: P.X(s), y1: P.Y(0), y2: P.Y(clampY(p)), "stroke-dasharray": "4 4" }),
                  DS.svg("circle", { class: "pt c", cx: P.X(s), cy: P.Y(clampY(p)), r: 9 }));
     cp.hl(8);
-    say(`A ${s} m² house: the model predicts about <b>$${Math.round(p)}k</b>. It never saw this house; it used the relation it learned.`);
-    DS.log(logEl, `predict(${s} m²) ≈ $${Math.round(p)}k`, "ok");
+    say(`A ${s} m² house: ${w.toFixed(2)} × ${s} + ${Math.round(b)} ≈ <b>$${Math.round(+w.toFixed(2) * s + Math.round(b))}k</b>. The model never saw this house; it used the parameters it learned.`);
+    DS.log(logEl, `predict(${s} m²) ≈ $${Math.round(+w.toFixed(2) * s + Math.round(b))}k`, "ok");
   }
   $(".hs-size").addEventListener("input", () => { $(".hs-sv").textContent = $(".hs-size").value + " m²"; });
   $(".hs-train").onclick = () => DS.run(root, train);
@@ -1331,7 +1342,7 @@ test_error  = model.error(test)      # how well it handles NEW data`;
   const ev = (c, x) => c.reduce((s, ck, k) => s + ck * (2 * x - 1) ** k, 0);
   function showFit() {
     const d = +f$(".ft-deg").value;
-    f$(".ft-dv").textContent = d;
+    f$(".ft-dv").textContent = `${d} · ${d + 1} parameters`;
     const c = polyfit(TR, d);
     const plotEl = f$(".ft-plot"); plotEl.innerHTML = "";
     const P = AI.plot(plotEl, { w: 520, h: 300, x0: 0, x1: 1, y0: -2, y1: 2, xl: "input", yl: "output", xt: [], yt: [-2, -1, 0, 1, 2] });
@@ -1362,8 +1373,8 @@ test_error  = model.error(test)      # how well it handles NEW data`;
       why: "The test set shows whether the model generalises to new data, which is what matters when you use it for real." },
     { q: "A model has a very low training error but a high test error. What's the problem?", options: ["Underfitting", "Overfitting", "Not enough training steps", "Nothing, it's perfect"], answer: 1,
       why: "It memorised the training data (noise included) instead of learning the general pattern, so it fails on new data." },
-    { q: "A model trained on house prices from 2010 predicts today's prices badly. What's the most likely reason?", options: ["The model is too fast", "The data no longer represents today's market", "Houses are too big", "The test set was too small"], answer: 1,
-      why: "A model can only learn what's in its data. Old or unrepresentative data leads to wrong predictions." },
+    { q: "The model is <code>price = a × size + b</code>. What does training do?", options: ["Collects more house sales", "Finds the best values of a and b for the data", "Turns the line into a curve", "Shows the price of every house"], answer: 1,
+      why: "<code>a</code> and <code>b</code> are the model's parameters. Training finds the values that make the line fit the data best; then the model can predict." },
   ]);
 })();
 </script>
@@ -1373,6 +1384,16 @@ test_error  = model.error(test)      # how well it handles NEW data`;
   <h2>3. Neural Networks <small style="color:var(--muted);font-weight:500">(layers of neurons)</small></h2>
   <p class="lead">A <b>neural network</b> is a model made of layers of simple units called <b>neurons</b>. Each connection has a <b>weight</b>, a number that says how much one neuron's output matters to the next. Learning means finding good weights.</p>
   <p>Think of a team passing a decision along. The first row reads the inputs, each next row combines what the row before reported, giving more say to colleagues it trusts more (bigger weights). The last row gives the answer. Training is the team learning whom to trust.</p>
+  <div class="callout tip"><b>Same idea as lesson 2, bigger model.</b> A neural network is still a model with parameters: its <b>weights</b>, plus a <b>bias</b> in each neuron (a small extra number, like <code>b</code> in the line). Two things change: it has many more parameters, and each neuron bends its result, so together they can draw curves instead of a straight line (<b>nonlinear</b>). Training is the same: find the parameter values that make the predictions right.</div>
+  <table class="cx">
+    <thead><tr><th>Model</th><th>Parameters</th><th>Shape</th><th>Output</th></tr></thead>
+    <tbody>
+      <tr><td><b>Line</b> (lesson 2)</td><td>2 (<code>a</code>, <code>b</code>)</td><td>straight</td><td>a price: a number (regression)</td></tr>
+      <tr><td><b>The network below</b></td><td>13 (9 weights, 4 biases)</td><td>curved (nonlinear)</td><td>light on or off: a category (classification)</td></tr>
+      <tr><td><b>An LLM</b> (lesson 4)</td><td>billions</td><td>very flexible</td><td>the next token, picked from a fixed vocabulary</td></tr>
+    </tbody>
+  </table>
+  <p>Whether the output is a category or a number, training works the same way: adjust the parameters to reduce the error.</p>
 
   <div class="w-nn">
   <div class="grid2">
@@ -1551,7 +1572,7 @@ for epoch in range(1500):
 <!-- ===================================================================== 4 -->
 <section class="section" id="llm" data-title="4. Generative AI & LLMs">
   <h2>4. Generative AI and Large Language Models <small style="color:var(--muted);font-weight:500">(LLMs)</small></h2>
-  <p class="lead"><b>Generative AI</b> creates new content (text, images, audio, code) instead of only sorting or predicting labels. A <b>large language model (LLM)</b> is a generative model for text: a very large neural network trained on huge amounts of text to predict what comes next.</p>
+  <p class="lead"><b>Generative AI</b> creates new content (text, images, audio, code) instead of only sorting or predicting labels. A <b>large language model (LLM)</b> is a generative model for text: a very large neural network trained on huge amounts of text to predict what comes next. It is the same idea as the line in lesson 2: a model whose parameters are learned from data, only with <b>billions</b> of them.</p>
   <p>Think of an extremely well-read autocomplete. Your phone's keyboard suggests the next word from a few common phrases. An LLM does the same job at a vastly larger scale, having read a large share of the public internet and many books, so its "next word" can continue a story, answer a question or write working code.</p>
 
   <h3>Tokens and the context window</h3>
@@ -2669,9 +2690,10 @@ if reply.tool_call and is_risky(reply.tool_call):
     ["Foundations", "#whatis", "Machine learning (ML)", "the part of AI where systems learn patterns from data"],
     ["Foundations", "#whatis", "Supervised / unsupervised / reinforcement", "learning from labelled examples / unlabelled data / rewards"],
     ["Foundations", "#whatis", "Classification / regression", "predicting a category / predicting a number; object detection does both"],
-    ["Foundations", "#data", "Model, training, prediction", "a function with adjustable settings; tuning them on data; using it on new cases"],
+    ["Foundations", "#data", "Model, parameters", "a formula; the numbers that set its shape, like a and b in y = a·x + b"],
+    ["Foundations", "#data", "Training, prediction", "finding the best parameter values from data; using the trained model on new cases"],
     ["Foundations", "#data", "Overfitting / underfitting", "memorising the training data / too simple to learn the pattern"],
-    ["Foundations", "#nn", "Neural network, weights", "layers of neurons; the numbers adjusted during training"],
+    ["Foundations", "#nn", "Neural network, weights, biases", "layers of neurons; its parameters, adjusted during training"],
     ["Foundations", "#nn", "Deep learning", "neural networks with many layers"],
     ["LLMs", "#llm", "Generative AI", "AI that creates new text, images, audio or code"],
     ["LLMs", "#llm", "Large language model (LLM)", "a huge neural network trained to predict the next token"],

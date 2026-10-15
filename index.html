@@ -1682,21 +1682,31 @@ for epoch in range(1500):
 
   <h3>The Transformer, at a high level</h3>
   <p>Most LLMs are built on the <b>Transformer</b> architecture (introduced in 2017). Its key idea is <b>attention</b>: when processing each token, the model looks at all the other tokens in the context and decides which ones matter most for understanding it.</p>
+  <p>Why is that needed? Many words only make sense in context. In <i>"The animal didn't cross the street because <b>it</b> was too tired"</i>, you know at once that <b>it</b> means the animal. Change one word, <i>"…because <b>it</b> was too wide"</i>, and <b>it</b> now means the street. Think of reading with a highlighter: for each word, you highlight the other words that help you understand it. Attention is the model's highlighter.</p>
   <div class="flow" style="padding-top:6px">
     <span class="node">Text</span><span class="arr">→</span><span class="node">Tokens</span><span class="arr">→</span>
     <span class="node">Embeddings<br><small style="font-weight:400">numbers for each token (more in lesson 6)</small></span><span class="arr">→</span>
     <span class="node active">Transformer layers × many<br><small style="font-weight:400">attention + small neural nets</small></span><span class="arr">→</span>
     <span class="node found">Probabilities for<br>the next token</span>
   </div>
+
+  <h4>Attention, step by step</h4>
+  <ol class="ex">
+    <li><b>Start with a general meaning.</b> Each token gets its embedding, a list of numbers for its usual meaning. At this point "it" is just "it", the same in every sentence.</li>
+    <li><b>Score the other tokens.</b> For each token, the model scores how relevant every other token is to it. The scores are turned into percentages that add up to 100%: the <b>attention weights</b>.</li>
+    <li><b>Mix in what matters.</b> The token's meaning is updated with information from the tokens it attends to most. After this step, "it" in "…too tired" carries the meaning "the animal".</li>
+    <li><b>Repeat, many times.</b> This happens in every layer, with many <b>attention heads</b> working side by side, each looking for a different kind of link (grammar, who did what, what "it" refers to). Layer after layer, the model builds an understanding of the whole text, and then predicts the next token from it.</li>
+  </ol>
+
   <div class="w-att card" style="margin-top:16px">
-    <div class="controls">
-      <span style="font-size:.9rem;color:var(--text-2)">Click a word to see what it pays attention to. Ending:</span>
-      <button class="secondary always at-end" data-e="tired" aria-pressed="true">…too tired.</button>
-      <button class="secondary always at-end" data-e="wide" aria-pressed="false">…too wide.</button>
-    </div>
+    <div class="controls at-ex"></div>
+    <p class="at-hint" style="margin:6px 0 0;font-size:.9rem;color:var(--text-2)"></p>
     <div class="toks at-words" style="padding-top:10px;align-items:flex-end;min-height:120px"></div>
+    <div class="at-meaning" style="margin-top:10px"></div>
     <div class="status at-status"></div>
   </div>
+  <p style="font-size:.9rem;color:var(--text-2);margin-top:8px"><b>How to read it:</b> the highlighted word is the one being understood. The bar and percentage under every word show how much attention it gets from that word; they add up to 100%. Grey words can't be clicked here. The weights are set by hand to show the idea: a real model learns, during training, the parameters that produce them.</p>
+  <div class="callout tip"><b>Why this was a breakthrough:</b> attention lets every token use information from anywhere in the context window, not just from nearby words, and all tokens are processed at the same time. That parallel work is exactly what GPUs are good at, which made it possible to train today's very large models.</div>
 
   <h3>Next-token prediction and temperature</h3>
   <p>An LLM writes one token at a time. At each step it gives every possible next token a <b>probability</b>, <b>picks one</b>, adds it to the text, and repeats. Usually it <b>samples</b> (picks at random, weighted by probability), which is why the same prompt can give different answers. <b>Temperature</b> controls how adventurous the picks are: low temperature almost always takes the most likely token; high temperature spreads the chances out.</p>
@@ -1792,32 +1802,54 @@ window = 128_000                  # tokens (varies by model)`, "tokens.py");
 
   /* ---------- attention ---------- */
   const ar = document.querySelector("#llm .w-att");
-  const WORDS = ["The", "animal", "didn't", "cross", "the", "street", "because", "it", "was", "too", "tired", "."];
-  // Hand-made, simplified attention weights from the clicked word to every word.
-  const ATT = {
-    tired: { 7: [2, 52, 3, 4, 2, 12, 3, 8, 3, 2, 8, 1], 10: [2, 30, 2, 2, 1, 5, 4, 34, 5, 12, 2, 1] },
-    wide: { 7: [2, 11, 3, 5, 3, 52, 3, 8, 3, 2, 7, 1], 10: [2, 6, 2, 3, 2, 32, 4, 30, 5, 12, 1, 1] },
+  // Hand-made, simplified attention weights (percent) from a focus word to every word of the sentence.
+  const EX = {
+    it: { label: 'Who is "it"?', variants: {
+      tired: { btn: "…too tired.", words: ["The", "animal", "didn't", "cross", "the", "street", "because", "it", "was", "too", "tired", "."],
+        focus: { 7: { w: [2, 52, 3, 4, 2, 12, 3, 8, 3, 2, 8, 1], meaning: '"it" = <b>the animal</b>', why: 'an animal can be tired; a street can\'t' },
+                 10: { w: [2, 30, 2, 2, 1, 5, 4, 34, 5, 12, 2, 1], meaning: '"tired" describes <b>it, the animal</b>', why: '"tired" looks back at "it" and at "animal"' } } },
+      wide: { btn: "…too wide.", words: ["The", "animal", "didn't", "cross", "the", "street", "because", "it", "was", "too", "wide", "."],
+        focus: { 7: { w: [2, 11, 3, 5, 3, 52, 3, 8, 3, 2, 7, 1], meaning: '"it" = <b>the street</b>', why: 'a street can be wide; an animal usually isn\'t' },
+                 10: { w: [2, 6, 2, 3, 2, 32, 4, 30, 5, 12, 1, 1], meaning: '"wide" describes <b>it, the street</b>', why: '"wide" looks back at "it" and at "street"' } } } } },
+    bank: { label: 'Which "bank"?', variants: {
+      river: { btn: "…of the river.", words: ["She", "sat", "on", "the", "bank", "of", "the", "river", "."],
+        focus: { 4: { w: [2, 8, 6, 3, 14, 5, 2, 58, 2], meaning: '"bank" = <b>the side of a river</b>', why: '"river" tells the model which kind of bank this is' } } },
+      money: { btn: "…put money in the bank.", words: ["She", "put", "money", "in", "the", "bank", "."],
+        focus: { 5: { w: [3, 14, 55, 6, 4, 16, 2], meaning: '"bank" = <b>a place to keep money</b>', why: '"money" tells the model which kind of bank this is' } } } } },
   };
-  let ending = "tired", sel = 7;
+  let exK = "it", varK = "tired", sel = 7;
   function att() {
-    const words = WORDS.slice(); words[10] = ending;
+    const v = EX[exK].variants[varK], f = v.focus[sel];
+    // example and variant buttons
+    const exBox = ar.querySelector(".at-ex"); exBox.innerHTML = "";
+    Object.entries(EX).forEach(([k, ex]) => {
+      const grp = DS.el("span", { style: { display: "inline-flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginRight: "14px" } },
+        DS.el("b", { style: { fontSize: ".9rem" } }, ex.label));
+      Object.entries(ex.variants).forEach(([vk, vv]) => grp.append(DS.el("button", { class: "secondary always", "aria-pressed": String(k === exK && vk === varK),
+        onclick: () => { exK = k; varK = vk; sel = +Object.keys(vv.focus)[0]; att(); } }, vv.btn)));
+      exBox.append(grp);
+    });
+    const clickable = Object.keys(v.focus).map(Number);
+    ar.querySelector(".at-hint").innerHTML = clickable.length > 1
+      ? `Click <b>${clickable.map(i => '"' + v.words[i] + '"').join("</b> or <b>")}</b> to see what each pays attention to, then switch the ending.`
+      : `Then switch to the other sentence and watch where <b>"${v.words[clickable[0]]}"</b> looks.`;
+    // the sentence, with an attention bar and percentage under every word
     const box = ar.querySelector(".at-words"); box.innerHTML = "";
-    const w = (ATT[ending][sel] || words.map((_, i) => (i === sel ? 40 : i === sel - 1 || i === sel + 1 ? 15 : 4)));
-    const tot = w.reduce((a, b) => a + b, 0);
-    words.forEach((word, i) => {
-      const pct = Math.round(w[i] / tot * 100);
-      const chip = DS.el("button", { class: "tk always" + (i === sel ? " att" : ""), style: { cursor: "pointer", color: "var(--text)", fontWeight: i === sel ? "700" : "500", display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", background: "transparent", border: i === sel ? "2px solid var(--hot)" : "1px solid var(--border)" } },
-        DS.el("span", { style: { display: "block", width: "100%", height: Math.max(3, pct * 1.4) + "px", background: "var(--hot)", opacity: (0.25 + pct / 70).toFixed(2), borderRadius: "3px" } }), word,
+    v.words.forEach((word, i) => {
+      const pct = f.w[i], can = clickable.includes(i), on = i === sel;
+      const chip = DS.el(can ? "button" : "span", { class: "tk" + (can ? " always" : "") + (on ? " att" : ""),
+        style: { cursor: can ? "pointer" : "default", color: can ? "var(--text)" : "var(--text-2)", fontWeight: on ? "700" : can ? "600" : "500",
+          display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", background: on ? "color-mix(in srgb, var(--hot) 12%, var(--surface))" : "transparent",
+          border: on ? "2px solid var(--hot)" : can ? "2px dashed var(--hot)" : "1px solid var(--border)" } },
+        DS.el("span", { style: { display: "block", width: "100%", height: Math.max(3, pct * 1.4) + "px", background: "var(--hot)", opacity: on ? "0.25" : (0.25 + pct / 70).toFixed(2), borderRadius: "3px" } }), word,
         DS.el("small", { style: { color: "var(--muted)", fontSize: "11px" } }, pct + "%"));
-      chip.onclick = () => { sel = i; att(); };
+      if (can) chip.onclick = () => { sel = i; att(); };
       box.append(chip);
     });
-    const top = w.map((v, i) => [v, i]).filter(([, i]) => i !== sel).sort((a, b) => b[0] - a[0])[0][1];
-    ar.querySelector(".at-status").innerHTML = sel === 7
-      ? `When reading <b>"it"</b>, the model pays most attention to <b>"${words[top]}"</b>: with "${ending}", "it" most likely means the ${words[top]}. Change the ending and watch the attention move.`
-      : `When reading <b>"${words[sel]}"</b>, attention goes mostly to <b>"${words[top]}"</b>. (These weights are simplified for teaching; real models have many attention "heads" in every layer.)`;
+    const top = f.w.map((x, i) => [x, i]).filter(([, i]) => i !== sel).sort((a, b) => b[0] - a[0]);
+    ar.querySelector(".at-meaning").innerHTML = `<span class="node found" style="height:auto;min-height:36px;padding:6px 12px;font:600 14px var(--sans)"><span>After attention: ${f.meaning}</span></span>`;
+    ar.querySelector(".at-status").innerHTML = `Reading <b>"${v.words[sel]}"</b>, the model pays most attention to <b>"${v.words[top[0][1]]}"</b> (${top[0][0]}%), then "${v.words[top[1][1]]}" (${top[1][0]}%): ${f.why}.`;
   }
-  ar.querySelectorAll(".at-end").forEach(b => (b.onclick = () => { ending = b.dataset.e; ar.querySelectorAll(".at-end").forEach(x => x.setAttribute("aria-pressed", String(x === b))); att(); }));
   att();
 
   /* ---------- next-token generation with temperature ---------- */

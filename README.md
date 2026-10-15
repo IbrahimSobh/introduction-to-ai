@@ -12,7 +12,7 @@ A **self-paced online course, completely free**, that explains how modern AI wor
 
 **Part A · Foundations** (short and high-level, about 20% of the course)
 
-1. **What is AI?**: AI and machine learning, and the three ways machines learn: supervised, unsupervised and reinforcement
+1. **What is AI?**: AI and machine learning, and the three ways machines learn: supervised, unsupervised and reinforcement; classification vs. regression, with object detection in a car's front camera as an example
 2. **Learning from Data**: how a model learns a relation (house prices), why predictions can be wrong, and overfitting vs. underfitting
 3. **Neural Networks**: layers of neurons with weights, and how a network learns by adjusting them
 

@@ -878,9 +878,77 @@ const AI = (() => {
   </table>
   <style>#whatis [aria-pressed="true"] { background: var(--surface-2); border-color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); }</style>
 
+  <h3>Classification and regression</h3>
+  <p>Supervised learning answers two kinds of questions. <b>Classification</b> picks a <b>category</b> from a fixed list. <b>Regression</b> predicts a <b>number</b> that can take any value.</p>
+  <table class="cx">
+    <thead><tr><th></th><th>Classification</th><th>Regression</th></tr></thead>
+    <tbody>
+      <tr><td><b>Predicts</b></td><td>a category from a fixed list</td><td>a continuous number</td></tr>
+      <tr><td><b>Asks</b></td><td>"Which one?"</td><td>"How much?" or "Where?"</td></tr>
+      <tr><td><b>Example</b></td><td>spam or not spam (the demo above)</td><td>a house price (lesson 2)</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Both together: a car's front camera</h4>
+  <p>Many real systems do both at once. In <b>object detection</b>, the front camera of a car finds every object in the frame. For each one it predicts <b>what</b> it is and <b>where</b> it is.</p>
+  <style>
+    #whatis .od { width: 100%; max-width: 640px; height: auto; display: block; margin: 12px 0 4px; border: 1px solid var(--border); border-radius: 12px; }
+    #whatis .od .tag text { font: 700 13px var(--sans); fill: #fff; }
+    #whatis .od .num { font: 600 12px var(--mono); fill: var(--hot); }
+    #whatis .od .badge text { font: 700 12px var(--sans); fill: #fff; }
+    #whatis .od-cards { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin: 12px 0; max-width: 640px; }
+    #whatis .od-cards .callout { margin: 0; border-color: var(--hot); }
+    #whatis .od-cards .n { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--hot); color: #fff; font-size: .75rem; font-weight: 700; margin-right: 6px; vertical-align: 1px; }
+    @media (max-width: 560px) { #whatis .od-cards { grid-template-columns: minmax(0, 1fr); } }
+  </style>
+  <svg class="od" viewBox="40 104 580 200" role="img" aria-label="A road seen from a car's front camera with three detected objects: a stop sign, a car and a person. Each has a box and a label. The person's box is highlighted with its label, person 94%, and its four numbers: x 458, y 154, width 40, height 106.">
+    <rect width="640" height="320" fill="color-mix(in srgb, var(--s1) 9%, var(--surface))"/>
+    <rect y="150" width="640" height="170" fill="color-mix(in srgb, var(--s3) 12%, var(--surface))"/>
+    <polygon points="290,150 350,150 600,320 40,320" fill="color-mix(in srgb, var(--text) 16%, var(--surface))"/>
+    <line x1="320" y1="150" x2="320" y2="320" stroke="var(--surface)" stroke-width="4" stroke-dasharray="14 12"/>
+    <!-- stop sign -->
+    <rect x="107" y="190" width="6" height="82" fill="var(--muted)"/>
+    <polygon points="102,160 118,160 130,172 130,188 118,200 102,200 90,188 90,172" fill="var(--bad)"/>
+    <text x="110" y="184" text-anchor="middle" style="font:700 9px var(--sans);fill:#fff">STOP</text>
+    <!-- car -->
+    <rect x="282" y="172" width="70" height="28" rx="7" fill="color-mix(in srgb, var(--s1) 70%, var(--surface))"/>
+    <rect x="262" y="192" width="110" height="42" rx="9" fill="var(--s1)"/>
+    <circle cx="284" cy="236" r="9" fill="var(--text)"/><circle cx="350" cy="236" r="9" fill="var(--text)"/>
+    <!-- person -->
+    <circle cx="478" cy="170" r="10" fill="var(--s4)"/>
+    <rect x="470" y="182" width="16" height="40" rx="7" fill="var(--s4)"/>
+    <line x1="473" y1="220" x2="468" y2="256" stroke="var(--s4)" stroke-width="6" stroke-linecap="round"/>
+    <line x1="483" y1="220" x2="488" y2="256" stroke="var(--s4)" stroke-width="6" stroke-linecap="round"/>
+    <!-- detections -->
+    <rect x="84" y="154" width="52" height="122" fill="none" stroke="var(--accent)" stroke-width="2"/>
+    <g class="tag"><rect x="84" y="134" width="108" height="20" fill="var(--accent)"/><text x="90" y="149">stop sign 91%</text></g>
+    <rect x="254" y="164" width="126" height="84" fill="none" stroke="var(--accent)" stroke-width="2"/>
+    <g class="tag"><rect x="254" y="144" width="66" height="20" fill="var(--accent)"/><text x="260" y="159">car 97%</text></g>
+    <rect x="458" y="154" width="40" height="106" fill="none" stroke="var(--hot)" stroke-width="3"/>
+    <g class="tag"><rect x="458" y="134" width="94" height="20" fill="var(--hot)"/><text x="464" y="149">person 94%</text></g>
+    <!-- the four numbers of the highlighted box -->
+    <circle cx="458" cy="154" r="4" fill="var(--hot)"/>
+    <text class="num" x="452" y="128" text-anchor="end">(x, y) = (458, 154)</text>
+    <line x1="458" y1="270" x2="498" y2="270" stroke="var(--hot)" stroke-width="1.5"/>
+    <line x1="458" y1="265" x2="458" y2="275" stroke="var(--hot)" stroke-width="1.5"/><line x1="498" y1="265" x2="498" y2="275" stroke="var(--hot)" stroke-width="1.5"/>
+    <text class="num" x="478" y="290" text-anchor="middle">width = 40</text>
+    <line x1="508" y1="154" x2="508" y2="260" stroke="var(--hot)" stroke-width="1.5"/>
+    <line x1="503" y1="154" x2="513" y2="154" stroke="var(--hot)" stroke-width="1.5"/><line x1="503" y1="260" x2="513" y2="260" stroke="var(--hot)" stroke-width="1.5"/>
+    <text class="num" x="518" y="211">height = 106</text>
+    <!-- badges linking to the cards below -->
+    <g class="badge"><circle cx="566" cy="144" r="11" fill="var(--hot)"/><text x="566" y="148" text-anchor="middle">1</text></g>
+    <g class="badge"><circle cx="440" cy="207" r="11" fill="var(--hot)"/><text x="440" y="211" text-anchor="middle">2</text></g>
+    <text x="52" y="122" style="font:600 11px var(--sans);fill:var(--muted);letter-spacing:.06em">FRONT CAMERA</text>
+  </svg>
+  <div class="od-cards">
+    <div class="callout"><span class="n">1</span><b>Classification: what is inside the box?</b><br>The label <b>person 94%</b>. The model picks one category from a fixed list (car, person, bike, stop sign…) and says how sure it is.</div>
+    <div class="callout"><span class="n">2</span><b>Regression: where is the box?</b><br>Four numbers: <b>x, y, width and height</b>. They are continuous values, so predicting them is regression.</div>
+  </div>
+  <p>For every object, the model predicts both at once: a category (classification) and four numbers (regression). The car needs both, <b>what</b> is ahead and <b>where</b> it is, to decide whether to slow down. It learns this from thousands of road images where people drew the boxes and wrote the labels, so it is supervised learning.</p>
+
   <h3>Where it shows up</h3>
   <ul>
-    <li><b>Supervised</b>: spam filters, image recognition, predicting prices or delivery times.</li>
+    <li><b>Supervised</b>: spam filters, image recognition, predicting prices or delivery times, and object detection in car cameras.</li>
     <li><b>Unsupervised</b>: customer segments, grouping similar news articles, spotting unusual transactions.</li>
     <li><b>Reinforcement</b>: game-playing AI, robotics, and part of how chat assistants are tuned to give helpful answers (lesson 4).</li>
   </ul>
@@ -1074,8 +1142,8 @@ path = agent.best_path(start)            # after learning`,
   DS.quiz(document.querySelector("#whatis .quizbox"), [
     { q: "How is machine learning related to AI?", options: ["They are unrelated fields", "Machine learning is a part of AI where systems learn patterns from data", "AI is a part of machine learning", "Machine learning means robots"], answer: 1,
       why: "AI is the broad field; machine learning is the part of it where systems learn from data instead of following hand-written rules." },
-    { q: "A model learns from emails that are already marked \"spam\" or \"not spam\". What type of learning is this?", options: ["Supervised", "Unsupervised", "Reinforcement", "None of these"], answer: 0,
-      why: "The examples come with the right answers (labels), which is supervised learning." },
+    { q: "A car's camera finds a person and predicts the box around them as four numbers: x, y, width and height. Predicting these numbers is…", options: ["Classification", "Regression", "Unsupervised learning", "Reinforcement learning"], answer: 1,
+      why: "The box is four continuous numbers, so predicting it is regression. Naming what is inside the box (\"person\") is classification." },
     { q: "A robot learns to walk by trying moves and getting rewards when it stays upright. What type of learning is this?", options: ["Supervised", "Unsupervised", "Reinforcement", "Fine-tuning"], answer: 2,
       why: "Learning by trial and error from rewards and penalties is reinforcement learning." },
   ]);
@@ -1086,7 +1154,7 @@ path = agent.best_path(start)            # after learning`,
 <section class="section" id="data" data-title="2. Learning from Data">
   <h2>2. Learning from Data <small style="color:var(--muted);font-weight:500">(models find relations)</small></h2>
   <p class="lead">A <b>model</b> is a mathematical function with adjustable settings. <b>Training</b> means adjusting those settings until the model's outputs match the examples, so it can make predictions for new cases.</p>
-  <p>An estate agent who has seen hundreds of sales can guess a new house's price from its size. They learned the relation from experience. A model does the same from data: it finds the pattern, then uses it on houses it has never seen.</p>
+  <p>An estate agent who has seen hundreds of sales can guess a new house's price from its size. They learned the relation from experience. A model does the same from data: it finds the pattern, then uses it on houses it has never seen. Because a price is a number, this is <b>regression</b> (lesson 1).</p>
 
   <div class="w-house">
   <div class="grid2">
@@ -2600,6 +2668,7 @@ if reply.tool_call and is_risky(reply.tool_call):
     ["Foundations", "#whatis", "Artificial intelligence (AI)", "building systems that do tasks linked to human intelligence"],
     ["Foundations", "#whatis", "Machine learning (ML)", "the part of AI where systems learn patterns from data"],
     ["Foundations", "#whatis", "Supervised / unsupervised / reinforcement", "learning from labelled examples / unlabelled data / rewards"],
+    ["Foundations", "#whatis", "Classification / regression", "predicting a category / predicting a number; object detection does both"],
     ["Foundations", "#data", "Model, training, prediction", "a function with adjustable settings; tuning them on data; using it on new cases"],
     ["Foundations", "#data", "Overfitting / underfitting", "memorising the training data / too simple to learn the pattern"],
     ["Foundations", "#nn", "Neural network, weights", "layers of neurons; the numbers adjusted during training"],

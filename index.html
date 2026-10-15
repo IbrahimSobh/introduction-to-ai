@@ -2330,7 +2330,7 @@ answer = llm(prompt)`, "rag.py");
   <div class="callout warn">The model never runs anything itself; it only <b>asks</b>. So the harness is where you put safety checks, such as asking a person to approve before a tool sends an email or makes a payment (more in lesson 10).</div>
 
   <h3>Reasoning, planning and the agentic loop</h3>
-  <p>Before acting, the agent <b>reasons</b> about the goal and <b>plans</b> the steps ("first get the forecast, then convert the temperature"). Then it runs the loop: <b>think → act → observe → repeat</b>, adjusting the plan when a result is surprising, until it can answer or hits a limit set by the harness (for example a maximum number of steps).</p>
+  <p>Before acting, the agent <b>reasons</b> about the goal and <b>plans</b> the steps ("first get the forecast, then convert the temperature"). Then it runs the loop: <b>think → act → observe → repeat</b>, adjusting the plan when a result is surprising, until it can answer or hits a limit set by the harness (for example a maximum number of steps). This cycle is often called the <b>agent loop</b>, and the pattern behind it is known as <b>ReAct</b> (<b>Re</b>ason + <b>Act</b>): the model alternates between reasoning about what to do next and acting with a tool, and uses each result to decide its next step.</p>
 
   <h3>Memory: short-term and long-term</h3>
   <table class="cx">
@@ -2853,7 +2853,7 @@ if reply.tool_call and is_risky(reply.tool_call):
     ["Agents", "#agents", "AI agent", "an LLM plus a harness, using tools in a loop toward a goal"],
     ["Agents", "#agents", "Harness", "the program around the LLM: offers and runs tools, runs the loop, manages context, memory and safety"],
     ["Agents", "#agents", "Tool calling", "the model asks for a tool by name with arguments; the harness runs it"],
-    ["Agents", "#agents", "Agentic loop", "think → act → observe → repeat"],
+    ["Agents", "#agents", "Agentic loop (agent loop, ReAct)", "think → act → observe → repeat; ReAct = Reason + Act"],
     ["Agents", "#agents", "Short- / long-term memory", "the context window / facts stored outside and recalled"],
     ["MCP & Skills", "#mcp", "MCP (Model Context Protocol)", "an open standard connecting AI apps (clients) to tools and data (servers)"],
     ["MCP & Skills", "#mcp", "Skill", "a folder with SKILL.md instructions that teaches an agent a task"],

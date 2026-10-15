@@ -40,7 +40,7 @@ It isn't aimed at ML engineers or data scientists looking for maths, real traini
 4. **Generative AI and LLMs**: what generative AI can create (text, code, images, audio, video), tokens and the context window, pre-training and instruction tuning (base vs. instruction-tuned models), the Transformer, next-token prediction, and which temperature to use for what
 5. **Prompt Engineering**: clear instructions and roles, context and examples (few-shot), step-by-step thinking, structured output, and context engineering: choosing everything the model sees
 6. **RAG**: why LLMs need external knowledge, embeddings, chunking and vector databases, and the retrieve → augment → generate flow
-7. **AI Agents**: agent = LLM + harness (the program that gives the model tools and runs the loop), tool calling, reasoning and planning, the think → act → observe loop, short- and long-term memory, and when to use a chat, RAG or an agent
+7. **AI Agents**: agent = LLM + harness (the program that gives the model tools and runs the loop), tool calling, reasoning and planning, the think → act → observe loop (the agent loop, or ReAct), short- and long-term memory, and when to use a chat, RAG or an agent
 8. **MCP and Skills**: MCP connects agents to tools and data; Skills teach them how to do a task
 9. **Fine-tuning**: what it is, and choosing between prompt engineering, RAG and fine-tuning
 10. **Limitations and Risks**: hallucinations, bias, privacy, prompt injection, and when a person must review AI output

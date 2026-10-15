@@ -1,0 +1,56 @@
+# Introduction to AI
+
+A **self-paced online course, completely free**, that explains how modern AI works: from the basics of machine learning and neural networks to the tools people use every day, including large language models, prompt engineering, RAG, AI agents, MCP and skills, and fine-tuning, plus the risks to watch for. No coding or maths background needed.
+
+**The certificate is free too.** No sign-up and no fees: pass the final quiz and get a certificate with your name.
+
+**Take the course:** https://ibrahimsobh.github.io/introduction-to-ai/
+
+[![Course path: Part A foundations (what is AI, learning from data, neural networks), Part B generative AI in practice (LLMs, prompt engineering, RAG, AI agents, MCP and skills, fine-tuning, limits and risks), the final quiz, then your certificate](images/course-overview.png)](https://ibrahimsobh.github.io/introduction-to-ai/)
+
+## What you'll learn
+
+**Part A · Foundations** (short and high-level, about 20% of the course)
+
+1. **What is AI?**: AI and machine learning, and the three ways machines learn: supervised, unsupervised and reinforcement
+2. **Learning from Data**: how a model learns a relation (house prices), why predictions can be wrong, and overfitting vs. underfitting
+3. **Neural Networks**: layers of neurons with weights, and how a network learns by adjusting them
+
+**Part B · Generative AI in practice** (the main focus, about 80%)
+
+4. **Generative AI and LLMs**: tokens and the context window, pre-training and instruction tuning, the Transformer, next-token prediction and temperature
+5. **Prompt Engineering**: clear instructions and roles, context and examples (few-shot), step-by-step thinking, structured output
+6. **RAG**: why LLMs need external knowledge, embeddings, chunking and vector databases, and the retrieve → augment → generate flow
+7. **AI Agents**: tools and tool calling, reasoning and planning, the think → act → observe loop, short- and long-term memory
+8. **MCP and Skills**: MCP connects agents to tools and data; Skills teach them how to do a task
+9. **Fine-tuning**: what it is, and choosing between prompt engineering, RAG and fine-tuning
+10. **Limitations and Risks**: hallucinations, bias, privacy, prompt injection, and when a person must review AI output
+
+## What each lesson gives you
+
+- **A clear explanation** of the main idea, with an everyday analogy, simple diagrams and comparison tables.
+- **Interactive demos** you drive yourself: train a model, watch a neural network learn, split text into tokens, sample with temperature, build a prompt, run RAG over a handbook, step through an agent loop, and test defences against prompt injection.
+- **Short code sketches** beside each demo, with the step being run highlighted, so you see how the idea is used in practice.
+- **A quiz in every lesson** (30 questions in total), plus an AI glossary to revise from.
+
+**Example: an AI agent at work.** The agent recalls that the user lives in Paris (long-term memory), plans, then asks for a tool: `get_weather({"city": "Paris", "day": "tomorrow"})`. The application runs it and the result comes back as an observation, while the loop diagram and the matching line of code light up.
+
+[![AI agents lesson: the think, act, observe loop with Observe highlighted, long-term memories recalled, the tool call and its result in the conversation, next to the agent loop code with the observe lines highlighted](images/agent-lesson.png)](https://ibrahimsobh.github.io/introduction-to-ai/#agents)
+
+**How long it takes:** about 4–5 hours if you're new to the topic, or about 2–3 hours if you already work with technology.
+
+| Part | New to the topic | Already work in tech |
+|---|---|---|
+| Part A: each of lessons 1–3 | 15–20 min | about 10 min |
+| Part B: each of lessons 4–10 | 25–35 min | about 15 min |
+| AI glossary review | 10 min | 5 min |
+| Final quiz and certificate | 15 min | 10 min |
+| **Total** | **about 4–5 hours** | **about 2–3 hours** |
+
+Finish with the final quiz: 12 questions on the main concepts. Score 10 of 12 or more (80%) to get a certificate with your name, which you can download as an image or save as a PDF and share.
+
+**Here's what your certificate looks like:**
+
+![Sample certificate of completion for Introduction to AI, with the learner's name, the date and the course provider's signature](images/certificate-sample.png)
+
+Everything runs in your browser. Nothing you enter, including your name, is sent anywhere.

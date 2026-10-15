@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Overview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #faf8f1;
+      --color-ink:     #1c1c1c;
+      --color-muted:   #555555;
+      --font-sans:     'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 48px 16px;
+    }
+    .frame { max-width: 960px; width: 100%; }
+    h1 {
+      font-size: clamp(1.75rem, 2.4vw + 0.8rem, 2.2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle { font-size: 1rem; color: var(--color-muted); margin-bottom: 2rem; }
+    .figure { overflow-x: auto; }
+    svg { width: 100%; min-width: 720px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <h1>Introduction to AI</h1>
+    <p class="subtitle">Part A: 3 foundation lessons · Part B: 7 lessons on generative AI · final quiz · certificate</p>
+
+    <div class="figure">
+    <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ai-course-overview-title ai-course-overview-desc"
+         font-family="Inter, system-ui, sans-serif">
+      <title id="ai-course-overview-title">Introduction to AI: course path</title>
+      <desc id="ai-course-overview-desc">Part A covers three foundation lessons, Part B covers seven lessons on generative AI from LLMs to risks, then a final quiz where 10 of 12 correct earns a certificate you can download and share.</desc>
+      <defs>
+        <marker id="arrow" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto"><polygon points="0 0, 12 5, 0 10" fill="#444444"/></marker>
+        <marker id="arrow-green" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto"><polygon points="0 0, 12 5, 0 10" fill="#2e7d32"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#faf8f1"/>
+
+      <!-- Zones -->
+      <rect x="40" y="32" width="880" height="124" rx="16" fill="#ebf0f4" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="56" y="60" font-size="16" font-weight="700" fill="#245c99">Part A · Foundations</text>
+      <rect x="40" y="196" width="880" height="196" rx="16" fill="#f3edf2" stroke="#7b4a8f" stroke-width="1.5"/>
+      <text x="56" y="224" font-size="16" font-weight="700" fill="#7b4a8f">Part B · Generative AI in practice</text>
+
+      <!-- Connectors -->
+      <line x1="480" y1="156" x2="480" y2="196" stroke="#444444" stroke-width="2" marker-end="url(#arrow)"/>
+      <line x1="300" y1="392" x2="300" y2="456" stroke="#444444" stroke-width="2" marker-end="url(#arrow)"/>
+      <line x1="420" y1="496" x2="560" y2="496" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+      <!-- Connector label -->
+      <rect x="432" y="468" width="116" height="20" fill="#faf8f1"/>
+      <text x="490" y="483" text-anchor="middle" font-size="12" font-weight="700" fill="#276b2b">10 of 12 to pass</text>
+
+      <!-- Part A lessons -->
+      <rect x="60" y="76" width="264" height="60" rx="12" fill="#ffffff" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="192" y="112" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">What is AI?</text>
+      <rect x="348" y="76" width="264" height="60" rx="12" fill="#ffffff" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="480" y="112" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Learning from data</text>
+      <rect x="636" y="76" width="264" height="60" rx="12" fill="#ffffff" stroke="#2b6cb0" stroke-width="1.5"/>
+      <text x="768" y="112" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Neural networks</text>
+
+      <!-- Part B lessons, row 1 -->
+      <rect x="60" y="240" width="192" height="56" rx="12" fill="#ffffff" stroke="#7b4a8f" stroke-width="1.5"/>
+      <text x="156" y="274" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">LLMs</text>
+      <rect x="276" y="240" width="192" height="56" rx="12" fill="#ffffff" stroke="#7b4a8f" stroke-width="1.5"/>
+      <text x="372" y="274" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Prompt engineering</text>
+      <rect x="492" y="240" width="192" height="56" rx="12" fill="#ffffff" stroke="#7b4a8f" stroke-width="1.5"/>
+      <text x="588" y="274" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">RAG</text>
+      <rect x="708" y="240" width="192" height="56" rx="12" fill="#ffffff" stroke="#7b4a8f" stroke-width="1.5"/>
+      <text x="804" y="274" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">AI agents</text>
+
+      <!-- Part B lessons, row 2 -->
+      <rect x="168" y="316" width="192" height="56" rx="12" fill="#ffffff" stroke="#7b4a8f" stroke-width="1.5"/>
+      <text x="264" y="350" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">MCP &amp; skills</text>
+      <rect x="384" y="316" width="192" height="56" rx="12" fill="#ffffff" stroke="#7b4a8f" stroke-width="1.5"/>
+      <text x="480" y="350" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Fine-tuning</text>
+      <rect x="600" y="316" width="192" height="56" rx="12" fill="#ffffff" stroke="#7b4a8f" stroke-width="1.5"/>
+      <text x="696" y="350" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Limits &amp; risks</text>
+
+      <!-- Final quiz -->
+      <rect x="180" y="456" width="240" height="80" rx="12" fill="#ffffff" stroke="#c8c8c8" stroke-width="1.5"/>
+      <text x="300" y="502" text-anchor="middle" font-size="16" font-weight="700" fill="#1c1c1c">Final quiz</text>
+
+      <!-- Focal: the certificate (larger, double frame like the real one) -->
+      <rect x="560" y="432" width="320" height="128" rx="12" fill="#dff0e0" stroke="#2e7d32" stroke-width="3"/>
+      <rect x="568" y="440" width="304" height="112" rx="8" fill="none" stroke="#2e7d32" stroke-width="1.5"/>
+      <text x="720" y="488" text-anchor="middle" font-size="20" font-weight="700" fill="#1c1c1c">Your certificate</text>
+      <text x="720" y="520" text-anchor="middle" font-size="16" fill="#555555">Download and share</text>
+    </svg>
+    </div>
+  </div>
+</body>
+</html>

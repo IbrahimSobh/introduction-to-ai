@@ -19,9 +19,9 @@ A **self-paced online course, completely free**, that explains how modern AI wor
 **Part B · Generative AI in practice** (the main focus, about 80%)
 
 4. **Generative AI and LLMs**: what generative AI can create (text, code, images, audio, video), tokens and the context window, pre-training and instruction tuning, the Transformer, next-token prediction and temperature
-5. **Prompt Engineering**: clear instructions and roles, context and examples (few-shot), step-by-step thinking, structured output
+5. **Prompt Engineering**: clear instructions and roles, context and examples (few-shot), step-by-step thinking, structured output, and context engineering: choosing everything the model sees
 6. **RAG**: why LLMs need external knowledge, embeddings, chunking and vector databases, and the retrieve → augment → generate flow
-7. **AI Agents**: tools and tool calling, reasoning and planning, the think → act → observe loop, short- and long-term memory
+7. **AI Agents**: agent = LLM + harness (the program that gives the model tools and runs the loop), tool calling, reasoning and planning, the think → act → observe loop, short- and long-term memory
 8. **MCP and Skills**: MCP connects agents to tools and data; Skills teach them how to do a task
 9. **Fine-tuning**: what it is, and choosing between prompt engineering, RAG and fine-tuning
 10. **Limitations and Risks**: hallucinations, bias, privacy, prompt injection, and when a person must review AI output
@@ -33,7 +33,7 @@ A **self-paced online course, completely free**, that explains how modern AI wor
 - **Short code sketches** beside each demo, with the step being run highlighted, so you see how the idea is used in practice.
 - **A quiz in every lesson** (30 questions in total), plus an AI glossary to revise from.
 
-**Example: an AI agent at work.** The agent recalls that the user lives in Paris (long-term memory), plans, then asks for a tool: `get_weather({"city": "Paris", "day": "tomorrow"})`. The application runs it and the result comes back as an observation, while the loop diagram and the matching line of code light up.
+**Example: an AI agent at work.** The agent recalls that the user lives in Paris (long-term memory), plans, then asks for a tool: `get_weather({"city": "Paris", "day": "tomorrow"})`. The harness runs it and the result comes back as an observation, while the loop diagram and the matching line of code light up.
 
 [![AI agents lesson: the think, act, observe loop with Observe highlighted, long-term memories recalled, the tool call and its result in the conversation, next to the agent loop code with the observe lines highlighted](images/agent-lesson.png)](https://ibrahimsobh.github.io/introduction-to-ai/#agents)
 

@@ -1897,11 +1897,24 @@ print(prompt)`, "generate.py");
   </table>
   <div class="callout tip">Treat prompts like code: test them on several real inputs, change one thing at a time, and keep the versions that work. Many modern models also "think" internally before answering, but clear steps and a clear output format still help.</div>
 
+  <h3>From prompt engineering to context engineering</h3>
+  <p>A prompt is only part of what the model sees. <b>Context engineering</b> is deciding <b>everything</b> that goes into the context window for each call: the instructions, but also the right documents, the tools, memories, the conversation so far, and what to leave out or summarise so the important parts fit.</p>
+  <table class="cx">
+    <thead><tr><th></th><th>Prompt engineering</th><th>Context engineering</th></tr></thead>
+    <tbody>
+      <tr><td><b>Focus</b></td><td>how you <b>write</b> the request</td><td>what the model <b>sees</b> when it answers</td></tr>
+      <tr><td><b>Includes</b></td><td>instructions, role, examples, output format</td><td>all of that, plus retrieved documents (RAG), tool definitions and results, memories, chat history</td></tr>
+      <tr><td><b>Done by</b></td><td>mostly a person, once per task</td><td>mostly the app or agent harness, automatically, at every step</td></tr>
+      <tr><td><b>Analogy</b></td><td>writing a clear brief</td><td>also packing the right folder of papers to go with it, and nothing extra</td></tr>
+    </tbody>
+  </table>
+  <p>The model only knows what's in its context, so a great prompt with the wrong documents still gives a wrong answer, and too much irrelevant text can bury the important part. RAG (lesson 6) and agents (lesson 7) are context engineering in action.</p>
+
   <h3>Where it shows up</h3>
   <ul>
     <li>Everyday chat use: better questions get better answers.</li>
     <li>Apps built on LLMs: a carefully tested system prompt plus structured (often JSON) output that the app's code reads.</li>
-    <li>RAG and agents (next lessons) are prompt engineering too: they put the right information and tools into the prompt.</li>
+    <li>RAG and agents (next lessons) rely on context engineering: they put the right information and tools into the context.</li>
   </ul>
   <div class="quizbox"></div>
 </section>
@@ -2197,8 +2210,8 @@ answer = llm(prompt)`, "rag.py");
 <!-- ===================================================================== 7 -->
 <section class="section" id="agents" data-title="7. AI Agents">
   <h2>7. AI Agents <small style="color:var(--muted);font-weight:500">(LLMs that take action)</small></h2>
-  <p class="lead">An <b>AI agent</b> is an LLM that can use <b>tools</b> (search, calculators, calendars, code, other apps) and works in a <b>loop</b> toward a goal: it decides what to do, does it, looks at the result, and repeats until the task is done.</p>
-  <p>A chatbot is like a knowledgeable friend on the phone: they can only talk. An agent is like an assistant at a desk with a computer and a phone: they can look things up, calculate, and get things done, checking each result before the next step.</p>
+  <p class="lead">An <b>AI agent</b> is an <b>LLM plus a harness</b>: the program around the model that gives it <b>tools</b> (search, calculators, calendars, code, other apps) and keeps it working in a <b>loop</b> toward a goal. The model decides what to do; the harness does it, shows the model the result, and they repeat until the task is done.</p>
+  <p>A chatbot is like a knowledgeable friend on the phone: they can only talk. An agent is like an assistant at a desk with a computer and a phone: they can look things up, calculate, and get things done, checking each result before the next step. The LLM is the assistant's brain; the harness is everything around it: the desk, the computer, the phone, the to-do list and the office rules.</p>
 
   <div class="w-agent">
   <div class="grid2">
@@ -2226,21 +2239,32 @@ answer = llm(prompt)`, "rag.py");
   </div>
   <style>@media (max-width: 560px) { #agents .ag-top { grid-template-columns: minmax(0, 1fr) !important; } }</style>
 
-  <h3>Agent = LLM + tools</h3>
-  <p>The LLM is the "brain" that reads and decides. <b>Tools</b> are functions the application makes available, each with a <b>name</b>, a <b>description</b> and the <b>inputs</b> it needs, so the model knows when and how to use it:</p>
+  <h3>Agent = LLM + harness</h3>
+  <p>The <b>LLM</b> is the brain: it reads, reasons and decides. On its own it can only turn text into text. The <b>harness</b> is the program around it that does everything else:</p>
+  <table class="cx">
+    <thead><tr><th>Harness job</th><th>What it means</th><th>In the demo above</th></tr></thead>
+    <tbody>
+      <tr><td><b>Tools</b></td><td>offers the model a list of tools, and runs the ones it asks for</td><td><code>get_weather</code>, <code>calculator</code></td></tr>
+      <tr><td><b>The loop</b></td><td>sends the conversation to the model again and again, until the task is done or a limit is hit</td><td>think → act → observe, at most 10 steps</td></tr>
+      <tr><td><b>Context and memory</b></td><td>decides what goes into the context window (context engineering, lesson 5), and saves and recalls long-term memories</td><td>"home city: Paris"</td></tr>
+      <tr><td><b>Safety</b></td><td>sets permissions and limits, and asks a person to approve risky actions</td><td>only two harmless tools</td></tr>
+    </tbody>
+  </table>
+  <div class="callout tip"><b>Same LLM, different harness, different agent.</b> A coding agent, a research agent and a customer-support agent can all use the same model. Their harnesses give them different tools, instructions and rules, which is why the harness matters as much as the model.</div>
+  <p><b>Tools</b> are functions the harness makes available, each with a <b>name</b>, a <b>description</b> and the <b>inputs</b> it needs, so the model knows when and how to use it:</p>
   <div class="code ag-tooldef" style="max-height:none;margin:8px 0 16px"></div>
 
   <h3>Tool calling: how the model asks to use a tool</h3>
   <ol class="ex">
-    <li>The app sends the conversation <b>plus the list of tools</b> to the model.</li>
+    <li>The harness sends the conversation <b>plus the list of tools</b> to the model.</li>
     <li>If a tool would help, the model replies with a <b>tool call</b>: the tool's name and its arguments, usually as JSON, for example <code>get_weather({"city": "Paris"})</code>.</li>
-    <li><b>The application</b>, not the model, runs the tool and sends back the result.</li>
+    <li><b>The harness</b>, not the model, runs the tool and sends back the result.</li>
     <li>The model reads the result and either calls another tool or writes the final answer.</li>
   </ol>
-  <div class="callout warn">The model never runs anything itself; it only <b>asks</b>. That's where you put safety checks, such as asking a person to approve before a tool sends an email or makes a payment (more in lesson 10).</div>
+  <div class="callout warn">The model never runs anything itself; it only <b>asks</b>. So the harness is where you put safety checks, such as asking a person to approve before a tool sends an email or makes a payment (more in lesson 10).</div>
 
   <h3>Reasoning, planning and the agentic loop</h3>
-  <p>Before acting, the agent <b>reasons</b> about the goal and <b>plans</b> the steps ("first get the forecast, then convert the temperature"). Then it runs the loop: <b>think → act → observe → repeat</b>, adjusting the plan when a result is surprising, until it can answer or hits a limit (for example a maximum number of steps).</p>
+  <p>Before acting, the agent <b>reasons</b> about the goal and <b>plans</b> the steps ("first get the forecast, then convert the temperature"). Then it runs the loop: <b>think → act → observe → repeat</b>, adjusting the plan when a result is surprising, until it can answer or hits a limit set by the harness (for example a maximum number of steps).</p>
 
   <h3>Memory: short-term and long-term</h3>
   <table class="cx">
@@ -2250,7 +2274,7 @@ answer = llm(prompt)`, "rag.py");
       <tr><td><b>Long-term</b></td><td>outside the model (a database, files, a vector store), retrieved when relevant</td><td>"home city: Paris", "prefers °F", saved from earlier chats</td></tr>
     </tbody>
   </table>
-  <p>Short-term memory is limited by the context window and is gone when the session ends. Long-term memory is usually stored and fetched just like RAG.</p>
+  <p>Short-term memory is limited by the context window and is gone when the session ends. Long-term memory is saved and fetched by the harness, usually just like RAG.</p>
 
   <h3>Chat, RAG or agent?</h3>
   <table class="cx">
@@ -2280,11 +2304,11 @@ answer = llm(prompt)`, "rag.py");
 while steps < 10:
     reply = llm(messages, tools=[get_weather, calculator])
     if reply.tool_call:                     # the model ASKS for a tool
-        result = run_tool(reply.tool_call)  # your code runs it
+        result = run_tool(reply.tool_call)  # the harness runs it
         messages += [reply, result]         # observe, then loop again
     else:
         print(reply.text)                   # final answer
-        break`, "agent.py");
+        break`, "agent_harness.py");
   DS.code(document.querySelector("#agents .ag-tooldef"), `tools = [{
     "name": "get_weather",
     "description": "Get the forecast for a city and day.",
@@ -2308,10 +2332,10 @@ while steps < 10:
   const MEM = ["home city: Paris", "prefers °F", "likes short answers"];
   const STEPS = [
     { who: "user", text: "Do I need an umbrella tomorrow? And what will the temperature be?", say: "The user's goal. Notice they didn't say which city.", line: 1 },
-    { mem: [0, 1], text: "Recalled from long-term memory: home city: Paris · prefers °F", who: "obs", label: "memory", say: "Before starting, the app fetches relevant <b>long-term memories</b> and adds them to the context.", line: 1 },
+    { mem: [0, 1], text: "Recalled from long-term memory: home city: Paris · prefers °F", who: "obs", label: "memory", say: "Before starting, the harness fetches relevant <b>long-term memories</b> and adds them to the context.", line: 1 },
     { ph: "think", who: "think", text: "The user is in Paris. Plan: 1) get tomorrow's forecast, 2) convert the temperature to °F, 3) answer briefly.", say: "<b>Think:</b> the model reasons and makes a plan.", line: 4 },
     { ph: "act", who: "act", text: 'tool call → get_weather({"city": "Paris", "day": "tomorrow"})', say: "<b>Act:</b> the model replies with a <b>tool call</b>: a name and JSON arguments. It doesn't run it.", line: [4, 5] },
-    { ph: "observe", who: "obs", text: 'result ← {"rain_chance": 80, "temp_c": 18}', say: "<b>Observe:</b> the application runs the tool and adds the result to the conversation.", line: [6, 7] },
+    { ph: "observe", who: "obs", text: 'result ← {"rain_chance": 80, "temp_c": 18}', say: "<b>Observe:</b> the harness runs the tool and adds the result to the conversation.", line: [6, 7] },
     { ph: "think", who: "think", text: "80% chance of rain → yes, an umbrella. The user prefers °F, so convert 18 °C.", say: "<b>Think</b> again with the new information. One more step is needed.", line: 4 },
     { ph: "act", who: "act", text: 'tool call → calculator({"expression": "18 * 9 / 5 + 32"})', say: "<b>Act:</b> call the calculator instead of guessing the maths.", line: [4, 5] },
     { ph: "observe", who: "obs", text: "result ← 64.4", say: "<b>Observe</b> the result.", line: [6, 7] },
@@ -2344,9 +2368,9 @@ while steps < 10:
 
   DS.quiz(document.querySelector("#agents .quizbox"), [
     { q: "What is an AI agent?", options: ["A chatbot with a nicer interface", "An LLM that can use tools and take actions in a loop to reach a goal", "A person who sells AI software", "A bigger language model"], answer: 1,
-      why: "Agent = LLM + tools + a loop: it decides, acts with tools, checks the results and repeats." },
-    { q: "When the model makes a <b>tool call</b>, who actually runs the tool?", options: ["The model runs it inside itself", "The application's code runs it and sends the result back to the model", "The user, by hand", "Nobody; it's simulated"], answer: 1,
-      why: "The model only asks (tool name + arguments). The application runs the tool and returns the result." },
+      why: "Agent = LLM + harness: the model decides, and the harness gives it tools, runs them and keeps the loop going until the goal is reached." },
+    { q: "When the model makes a <b>tool call</b>, who actually runs the tool?", options: ["The model runs it inside itself", "The harness (the app's code) runs it and sends the result back to the model", "The user, by hand", "Nobody; it's simulated"], answer: 1,
+      why: "The model only asks (tool name + arguments). The harness runs the tool and returns the result." },
     { q: "What is the order of the agentic loop?", options: ["Answer, then think", "Think, act, observe, and repeat until done", "Act first, think never", "Observe, then stop"], answer: 1,
       why: "The agent reasons, takes an action with a tool, observes the result, and loops until it can give the final answer." },
   ]);
@@ -2385,7 +2409,7 @@ while steps < 10:
   <h3>MCP: a standard way to connect agents to tools and data</h3>
   <ul>
     <li>Before MCP, every AI app needed custom code for every tool. MCP is like a <b>USB-C port for AI</b>: build a connector once, use it in any app that supports MCP.</li>
-    <li><b>Client and server:</b> the AI application (the <b>host</b>) runs an <b>MCP client</b> for each <b>MCP server</b> it connects to. A server wraps one system (GitHub, a database, a file system, a calendar) and exposes what it offers.</li>
+    <li><b>Client and server:</b> the AI application (the <b>host</b>, for an agent its harness) runs an <b>MCP client</b> for each <b>MCP server</b> it connects to. A server wraps one system (GitHub, a database, a file system, a calendar) and exposes what it offers.</li>
     <li>Servers mainly offer <b>tools</b> (actions the model can call), <b>resources</b> (data it can read) and <b>prompts</b> (ready-made templates). The app first asks <i>"what do you offer?"</i> (<code>tools/list</code>), then calls a tool when the model asks for it (<code>tools/call</code>). The messages use JSON.</li>
     <li>MCP was introduced by Anthropic in late 2024 as an open standard and is now supported by many AI apps and tools.</li>
   </ul>
@@ -2756,11 +2780,13 @@ if reply.tool_call and is_risky(reply.tool_call):
     ["Prompting", "#prompt", "System prompt, role", "instructions that set the model's job, tone and rules"],
     ["Prompting", "#prompt", "Few-shot", "putting a few input → output examples in the prompt"],
     ["Prompting", "#prompt", "Structured output", "asking for lists, tables or JSON with fixed keys"],
+    ["Prompting", "#prompt", "Context engineering", "choosing everything the model sees: instructions, documents, tools, memories, history"],
     ["RAG", "#rag", "RAG", "retrieve relevant chunks, add them to the prompt, generate the answer"],
     ["RAG", "#rag", "Embedding", "a vector of numbers that captures a text's meaning"],
     ["RAG", "#rag", "Chunking, vector database", "splitting documents into pieces; storing and searching their vectors"],
-    ["Agents", "#agents", "AI agent", "an LLM with tools working in a loop toward a goal"],
-    ["Agents", "#agents", "Tool calling", "the model asks for a tool by name with arguments; the app runs it"],
+    ["Agents", "#agents", "AI agent", "an LLM plus a harness, using tools in a loop toward a goal"],
+    ["Agents", "#agents", "Harness", "the program around the LLM: offers and runs tools, runs the loop, manages context, memory and safety"],
+    ["Agents", "#agents", "Tool calling", "the model asks for a tool by name with arguments; the harness runs it"],
     ["Agents", "#agents", "Agentic loop", "think → act → observe → repeat"],
     ["Agents", "#agents", "Short- / long-term memory", "the context window / facts stored outside and recalled"],
     ["MCP & Skills", "#mcp", "MCP (Model Context Protocol)", "an open standard connecting AI apps (clients) to tools and data (servers)"],
@@ -2857,8 +2883,8 @@ if reply.tool_call and is_risky(reply.tool_call):
       why: "RAG retrieves relevant chunks from your documents and adds them to the prompt, so answers use knowledge the model wasn't trained on." },
     { q: "What does an <b>embedding</b> represent?", options: ["The meaning of a text, as a list of numbers", "A compressed copy of a file", "The model's password", "The length of a document"], answer: 0,
       why: "Embeddings turn text into vectors; texts with similar meanings get similar vectors, which makes meaning-based search possible." },
-    { q: "In an AI agent, what happens when the model makes a <b>tool call</b>?", options: ["The model runs the tool by itself", "The model asks for a tool with arguments; the application runs it and returns the result", "The user must type the result", "The conversation ends"], answer: 1,
-      why: "The model only requests the tool. The application executes it and sends the result back, and the agent loop continues." },
+    { q: "In an AI agent, what happens when the model makes a <b>tool call</b>?", options: ["The model runs the tool by itself", "The model asks for a tool with arguments; the harness runs it and returns the result", "The user must type the result", "The conversation ends"], answer: 1,
+      why: "The model only requests the tool. The harness (the app around the model) executes it and sends the result back, and the agent loop continues." },
     { q: "How do <b>MCP</b> and <b>Skills</b> work together?", options: ["They are two names for the same thing", "MCP gives the agent access to tools and data; Skills give it the know-how for a task", "Skills give access; MCP gives instructions", "Both are ways to fine-tune a model"], answer: 1,
       why: "MCP connects the agent to systems (access). Skills package instructions for doing a task well (know-how)." },
     { q: "When is <b>fine-tuning</b> usually the best choice?", options: ["When the facts change every week", "When you need a consistent behaviour or style that good prompts can't reliably produce, and you have many examples", "As the very first thing to try", "When you want the model to search the web"], answer: 1,

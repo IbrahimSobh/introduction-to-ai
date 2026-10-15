@@ -859,6 +859,7 @@ const AI = (() => {
         <button class="secondary always wy-mode" data-m="uns" aria-pressed="false">Unsupervised</button>
         <button class="secondary always wy-mode" data-m="rl" aria-pressed="false">Reinforcement</button>
         <span class="sep"></span>
+        <span class="wy-k" hidden><button class="secondary wy-kb" data-k="2" aria-pressed="false">2 groups</button> <button class="secondary wy-kb" data-k="3" aria-pressed="true">3 groups</button></span>
         <button class="wy-run">▶ Run</button>
       </div>
       <div class="viz wy-viz" style="min-height:300px"><span class="caption wy-cap"></span><div class="wy-plot" style="padding-top:18px"></div></div>
@@ -876,6 +877,7 @@ const AI = (() => {
       <tr><td><b>Reinforcement</b></td><td>trial and error, with <b>rewards</b> and penalties</td><td>a robot or game player learns which moves lead to a win</td></tr>
     </tbody>
   </table>
+  <p><b>Clustering in practice:</b> a shop groups its customers by behaviour, then treats each group differently: a discount to win back occasional shoppers, deals for bargain hunters, early access for big spenders. Nobody labelled the customers first; the groups came from the data, and the shop chose how many groups were useful.</p>
   <style>#whatis [aria-pressed="true"] { background: var(--surface-2); border-color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); }</style>
 
   <h3>Classification and regression</h3>
@@ -969,8 +971,8 @@ model.fit(emails, labels)              # learn the pattern
 model.predict([[7, 6]])                # -> "spam"`,
     uns: `# Unsupervised: find structure WITHOUT answers
 customers = [[visits, spend], ...]    # no labels at all
-model = KMeans(n_clusters=3)
-groups = model.fit_predict(customers)  # discovers 3 groups
+model = KMeans(n_clusters=k)          # YOU choose k: 2 or 3
+groups = model.fit_predict(customers)  # discovers k groups
 # You decide what the groups mean afterwards`,
     rl: `# Reinforcement: learn by trial and error
 for episode in range(300):
@@ -981,7 +983,7 @@ for episode in range(300):
         agent.learn(reward)              # goal +10, pit -10, step -1
 path = agent.best_path(start)            # after learning`,
   };
-  let mode = "sup", cp;
+  let mode = "sup", cp, K = 3;
   const R = AI.rng(4);
   // supervised data: [links, freeWords, spam?]
   const sup = [];
@@ -998,6 +1000,7 @@ path = agent.best_path(start)            # after learning`,
     mode = m;
     root.querySelectorAll(".wy-mode").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === m)));
     cp = DS.code($(".code"), SRC[m], m === "rl" ? "reinforcement.py" : m === "uns" ? "unsupervised.py" : "supervised.py");
+    $(".wy-k").hidden = m !== "uns";
     if (m === "sup") {
       cap.textContent = "Emails · blue = not spam · orange = spam";
       const P = frame("links in the email", "\"free!\" words");
@@ -1007,7 +1010,7 @@ path = agent.best_path(start)            # after learning`,
       cap.textContent = "Customers · no labels";
       const P = frame("visits per month", "spend");
       uns.forEach(([x, y]) => P.g.append(DS.svg("circle", { class: "pt u", cx: P.X(x), cy: P.Y(y), r: 7 })));
-      say("Grey dots: customers with <b>no labels</b>. Press <b>Run</b> and the algorithm will discover groups on its own.");
+      say(`Grey dots: customers with <b>no labels</b>. Choose <b>2 or 3 groups</b>, then press <b>Run</b> and the algorithm will discover the groups on its own.`);
     } else {
       cap.textContent = "Grid world · 🤖 start · ⭐ goal +10 · 🕳️ pit -10";
       drawGrid(null, [0, 3]);
@@ -1047,8 +1050,9 @@ path = agent.best_path(start)            # after learning`,
   async function runUns() {
     const P = frame("visits per month", "spend");
     const dots = uns.map(([x, y]) => { const c = DS.svg("circle", { class: "pt u", cx: P.X(x), cy: P.Y(y), r: 7 }); P.g.append(c); return c; });
-    cp.hl(2, 3); say("Start: 3 group centres (✕) placed at random.");
-    let C = [[1, 8], [5, 1], [9, 9]];
+    cp.hl(2, 3); say(`You chose <b>${K} groups</b>. Start: ${K} group centres (✕), placed roughly.`);
+    // fixed, sensible starting centres, so every run ends in a clean grouping
+    let C = K === 2 ? [[3, 9], [7, 1]] : [[1, 6], [9, 6], [5, 9.5]];
     const cls = ["a", "b", "c"];
     const marks = C.map(() => { const t = DS.svg("text", { class: "lbl", "text-anchor": "middle", "font-size": "22", style: "font:700 22px var(--sans);fill:var(--text)" }, "✕"); P.g.append(t); return t; });
     const place = () => C.forEach(([x, y], i) => { marks[i].setAttribute("x", P.X(x)); marks[i].setAttribute("y", P.Y(y) + 8); });
@@ -1062,8 +1066,13 @@ path = agent.best_path(start)            # after learning`,
       place(); say(`…then each centre moves to the middle of its group.`); await DS.wait(0.9);
     }
     cp.hl(5);
-    say("Three groups appeared without any labels. A person can now name them, for example <i>occasional</i>, <i>regular</i> and <i>big spenders</i>.");
-    DS.log(logEl, "found 3 groups of customers", "ok");
+    // name each group from where its centre sits: high spend = big spenders
+    const top = C.reduce((b, c, i) => (c[1] > C[b][1] ? i : b), 0);
+    const names = C.map((c, i) => i === top ? "big spenders" : K === 2 ? "everyone else" : c[0] < C.filter((_, j) => j !== top).reduce((s, d) => s + d[0], 0) / 2 ? "occasional shoppers" : "frequent bargain hunters");
+    C.forEach(([x, y], i) => P.g.append(DS.svg("text", { x: P.X(x), y: P.Y(y) - 16, "text-anchor": "middle", style: "font:700 13px var(--sans);fill:var(--text);paint-order:stroke;stroke:var(--surface);stroke-width:4px" }, names[i])));
+    const list = K === 2 ? "<i>big spenders</i> and <i>everyone else</i>" : "<i>occasional shoppers</i>, <i>frequent bargain hunters</i> and <i>big spenders</i>";
+    say(`${K} groups appeared without any labels, and a person named them: ${list}. ${K === 2 ? "Now try <b>3 groups</b>" : "Now try <b>2 groups</b>"}: same customers, a different grouping. Neither is wrong; you choose what's useful, for example 2 for a VIP programme, 3 for targeted offers.${K === 2 ? " (Each ✕ is its group's average, so it can sit in a gap between its customers.)" : ""}`);
+    DS.log(logEl, `found ${K} groups of customers`, "ok");
   }
 
   // ---- reinforcement learning: 5 x 3 grid, Q-learning
@@ -1137,6 +1146,11 @@ path = agent.best_path(start)            # after learning`,
 
   root.querySelectorAll(".wy-mode").forEach(b => (b.onclick = () => { if (!root.dataset.busy) setMode(b.dataset.m); }));
   $(".wy-run").onclick = () => DS.run(root, () => (mode === "sup" ? runSup() : mode === "uns" ? runUns() : runRL()));
+  root.querySelectorAll(".wy-kb").forEach(b => (b.onclick = () => {
+    K = +b.dataset.k;
+    root.querySelectorAll(".wy-kb").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    DS.run(root, runUns);
+  }));
   setMode("sup");
 
   DS.quiz(document.querySelector("#whatis .quizbox"), [

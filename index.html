@@ -990,7 +990,7 @@ path = agent.best_path(start)            # after learning`,
   for (let i = 0; i < 14; i++) { const x = 1 + R() * 4, y = 1 + R() * 4; sup.push([x, y, 0]); }
   for (let i = 0; i < 14; i++) { const x = 5 + R() * 4, y = 4.5 + R() * 4.5; sup.push([x, y, 1]); }
   const uns = [];
-  [[2.5, 2.5], [7.5, 3], [5, 7.5]].forEach(([cx, cy]) => { for (let i = 0; i < 11; i++) uns.push([cx + AI.gauss(R) * 2.2, cy + AI.gauss(R) * 2.2]); });
+  [[3.4, 2.6], [6.6, 2.9], [5, 7.5]].forEach(([cx, cy]) => { for (let i = 0; i < 11; i++) uns.push([cx + AI.gauss(R) * 2.2, cy + AI.gauss(R) * 2.2]); });
 
   function frame(xl, yl) {
     plotEl.innerHTML = "";
@@ -1054,17 +1054,28 @@ path = agent.best_path(start)            # after learning`,
     // fixed, sensible starting centres, so every run ends in a clean grouping
     let C = K === 2 ? [[3, 9], [7, 1]] : [[1, 6], [9, 6], [5, 9.5]];
     const cls = ["a", "b", "c"];
-    const marks = C.map(() => { const t = DS.svg("text", { class: "lbl", "text-anchor": "middle", "font-size": "22", style: "font:700 22px var(--sans);fill:var(--text)" }, "✕"); P.g.append(t); return t; });
+    const marks = C.map(() => { const t = DS.svg("text", { class: "lbl", "text-anchor": "middle", style: "font:700 24px var(--sans);fill:var(--text);paint-order:stroke;stroke:var(--surface);stroke-width:4px" }, "✕"); P.g.append(t); return t; });
     const place = () => C.forEach(([x, y], i) => { marks[i].setAttribute("x", P.X(x)); marks[i].setAttribute("y", P.Y(y) + 8); });
-    place(); await DS.wait(1.2);
+    place(); await DS.wait(0.8);
     cp.hl(4);
-    for (let it = 0; it < 5; it++) {
-      const asg = uns.map(([x, y]) => { let best = 0, bd = 1e9; C.forEach(([cx, cy], i) => { const d = (x - cx) ** 2 + (y - cy) ** 2; if (d < bd) { bd = d; best = i; } }); return best; });
-      dots.forEach((d, i) => d.setAttribute("class", "pt " + cls[asg[i]]));
-      say(`Round ${it + 1}: each customer joins the <b>nearest</b> centre…`); await DS.wait(0.9);
-      C = C.map((c, i) => { const m = uns.filter((_, j) => asg[j] === i); return m.length ? [m.reduce((s, p) => s + p[0], 0) / m.length, m.reduce((s, p) => s + p[1], 0) / m.length] : c; });
-      place(); say(`…then each centre moves to the middle of its group.`); await DS.wait(0.9);
+    let asg = uns.map(() => -1);
+    for (let it = 0; it < 8; it++) {
+      const next = uns.map(([x, y]) => { let best = 0, bd = 1e9; C.forEach(([cx, cy], i) => { const d = (x - cx) ** 2 + (y - cy) ** 2; if (d < bd) { bd = d; best = i; } }); return best; });
+      const changed = next.map((g, i) => g !== asg[i] ? i : -1).filter(i => i >= 0);
+      if (!changed.length) break;
+      asg = next;
+      say(`Round ${it + 1}: each customer joins the <b>nearest</b> centre${it ? ` (${changed.length} switched group)` : ""}…`);
+      // colour the customers one by one, so the change is easy to follow
+      for (const i of changed) { dots[i].setAttribute("class", "pt " + cls[asg[i]]); await DS.wait(0.035); }
+      await DS.wait(0.5);
+      // then glide each centre to the middle of its group
+      const to = C.map((c, i) => { const m = uns.filter((_, j) => asg[j] === i); return m.length ? [m.reduce((s, p) => s + p[0], 0) / m.length, m.reduce((s, p) => s + p[1], 0) / m.length] : c; });
+      const from = C.map(c => [...c]);
+      say("…then each centre moves to the middle of its group.");
+      for (let f = 1; f <= 20; f++) { const e = 1 - (1 - f / 20) ** 3; C = from.map((c, i) => [c[0] + (to[i][0] - c[0]) * e, c[1] + (to[i][1] - c[1]) * e]); place(); await DS.wait(0.03); }
+      C = to; place(); await DS.wait(0.4);
     }
+    say("No customer changed group, so the groups are final."); await DS.wait(0.6);
     cp.hl(5);
     // name each group from where its centre sits: high spend = big spenders
     const top = C.reduce((b, c, i) => (c[1] > C[b][1] ? i : b), 0);

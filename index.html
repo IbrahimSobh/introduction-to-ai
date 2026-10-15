@@ -808,16 +808,16 @@ const AI = (() => {
   <div class="map">
     <div><h4>Part A · Foundations</h4>
       <div class="order" style="grid-template-columns:minmax(0,1fr);margin:0">
-        <a href="#whatis">What is AI?<small>AI, ML, three ways to learn</small></a>
-        <a href="#data">Learning from Data<small>fitting, over- and underfitting</small></a>
+        <a href="#whatis">What is AI?<small>AI, ML, ways to learn, classification and regression</small></a>
+        <a href="#data">Learning from Data<small>models and parameters, over- and underfitting</small></a>
         <a href="#nn">Neural Networks<small>neurons, weights, training</small></a>
       </div></div>
     <div><h4>Part B · Generative AI in practice</h4>
       <div class="order" style="margin:0;counter-reset:step 3">
         <a href="#llm">Generative AI &amp; LLMs<small>tokens, transformers, temperature</small></a>
-        <a href="#prompt">Prompt Engineering<small>roles, examples, structure</small></a>
+        <a href="#prompt">Prompt Engineering<small>prompts and context engineering</small></a>
         <a href="#rag">RAG<small>embeddings, retrieval</small></a>
-        <a href="#agents">AI Agents<small>tools, the agentic loop</small></a>
+        <a href="#agents">AI Agents<small>LLM + harness, the agentic loop</small></a>
         <a href="#mcp">MCP &amp; Skills<small>access and know-how</small></a>
         <a href="#finetune">Fine-tuning<small>and when to use it</small></a>
         <a href="#risks">Limitations &amp; Risks<small>hallucinations, injection</small></a>
@@ -1396,7 +1396,7 @@ test_error  = model.error(test)      # how well it handles NEW data`;
     <tbody>
       <tr><td><b>Line</b> (lesson 2)</td><td>2 (<code>a</code>, <code>b</code>)</td><td>straight</td><td>a price: a number (regression)</td></tr>
       <tr><td><b>The network below</b></td><td>13 (9 weights, 4 biases)</td><td>curved (nonlinear)</td><td>light on or off: a category (classification)</td></tr>
-      <tr><td><b>An LLM</b> (lesson 4)</td><td>billions</td><td>very flexible</td><td>the next token, picked from a fixed vocabulary</td></tr>
+      <tr><td><b>A large language model</b> (LLM, lesson 4)</td><td>billions</td><td>very flexible</td><td>the next word or word piece (a <b>token</b>), picked from a fixed vocabulary</td></tr>
     </tbody>
   </table>
   <p>Whether the output is a category or a number, training works the same way: adjust the parameters to reduce the error.</p>
@@ -1440,7 +1440,7 @@ test_error  = model.error(test)      # how well it handles NEW data`;
     <li><b>Update:</b> nudge every weight a little in the direction that reduces the error (gradient descent). Repeat over many examples, many times.</li>
   </ol>
   <div class="callout tip"><b>Gradient descent, intuitively:</b> imagine walking down a hill in thick fog. You can't see the valley (the lowest error), but you can feel which way the ground slopes under your feet, so you take a small step downhill, then again, and again.</div>
-  <p>Training is <b>iterative</b>: the network goes through the examples many times, and each time it nudges every parameter a little, until the error stops falling. The small network above needs 1,500 rounds for its 13 parameters. An LLM has billions of parameters and learns from trillions of tokens, which adds up to an enormous number of simple multiplications. <b>GPUs</b> can do thousands of these at the same time (in parallel), which is why training large models needs many powerful GPUs, often running for weeks or months.</p>
+  <p>Training is <b>iterative</b>: the network goes through the examples many times, and each time it nudges every parameter a little, until the error stops falling. The small network above needs 1,500 rounds for its 13 parameters. An LLM has billions of parameters and learns from trillions of words (tokens, lesson 4), which adds up to an enormous number of simple multiplications. <b>GPUs</b> can do thousands of these at the same time (in parallel), which is why training large models needs many powerful GPUs, often running for weeks or months.</p>
   <div class="callout">Modern networks work the same way, just much bigger: <b>deep learning</b> means many layers, and today's large language models have <b>billions</b> of weights (often called <b>parameters</b>).</div>
 
   <h3>Where it shows up</h3>
@@ -1580,7 +1580,7 @@ for epoch in range(1500):
 <!-- ===================================================================== 4 -->
 <section class="section" id="llm" data-title="4. Generative AI & LLMs">
   <h2>4. Generative AI and Large Language Models <small style="color:var(--muted);font-weight:500">(LLMs)</small></h2>
-  <p class="lead"><b>Generative AI</b> creates new content (text, images, audio, code) instead of only sorting or predicting labels. A <b>large language model (LLM)</b> is a generative model for text: a very large neural network trained on huge amounts of text to predict what comes next. It is the same idea as the line in lesson 2: a model whose parameters are learned from data, only with <b>billions</b> of them.</p>
+  <p class="lead"><b>Generative AI</b> creates new content (text, images, audio, video, code) instead of only sorting or predicting labels. A <b>large language model (LLM)</b> is a generative model for text: a very large neural network trained on huge amounts of text to predict what comes next. It is the same idea as the line in lesson 2: a model whose parameters are learned from data, only with <b>billions</b> of them.</p>
   <p>Think of an extremely well-read autocomplete. Your phone's keyboard suggests the next word from a few common phrases. An LLM does the same job at a vastly larger scale, having read a large share of the public internet and many books, so its "next word" can continue a story, answer a question or write working code.</p>
   <h3>Not only text</h3>
   <table class="cx">
@@ -1650,7 +1650,7 @@ for epoch in range(1500):
   <p>Most LLMs are built on the <b>Transformer</b> architecture (introduced in 2017). Its key idea is <b>attention</b>: when processing each token, the model looks at all the other tokens in the context and decides which ones matter most for understanding it.</p>
   <div class="flow" style="padding-top:6px">
     <span class="node">Text</span><span class="arr">→</span><span class="node">Tokens</span><span class="arr">→</span>
-    <span class="node">Embeddings<br><small style="font-weight:400">numbers for each token</small></span><span class="arr">→</span>
+    <span class="node">Embeddings<br><small style="font-weight:400">numbers for each token (more in lesson 6)</small></span><span class="arr">→</span>
     <span class="node active">Transformer layers × many<br><small style="font-weight:400">attention + small neural nets</small></span><span class="arr">→</span>
     <span class="node found">Probabilities for<br>the next token</span>
   </div>
@@ -1856,7 +1856,7 @@ print(prompt)`, "generate.py");
 <section class="section" id="prompt" data-title="5. Prompt Engineering">
   <h2>5. Prompt Engineering <small style="color:var(--muted);font-weight:500">(asking well)</small></h2>
   <p class="lead">A <b>prompt</b> is everything you send the model. <b>Prompt engineering</b> is writing prompts that reliably get the result you need: clear, specific and structured.</p>
-  <p>Think of briefing a smart new colleague who knows a lot but nothing about your situation. "Look at this" gets you a guess. "You're our feedback analyst; label this review as positive, negative or mixed, like these two examples, and give me JSON" gets you exactly what you need.</p>
+  <p>Think of briefing a smart new colleague who knows a lot but nothing about your situation. "Look at this" gets you a guess. "You're our feedback analyst; label this review as positive, negative or mixed, like these two examples, and give me JSON" gets you exactly what you need. (<b>JSON</b> is a simple, structured text format that programs can read.)</p>
 
   <div class="w-pe">
   <div class="grid2">
@@ -1888,7 +1888,7 @@ print(prompt)`, "generate.py");
     <thead><tr><th>Technique</th><th>What you add</th><th>Why it helps</th></tr></thead>
     <tbody>
       <tr><td><b>Clear instructions</b></td><td>exactly what to do, the options, length and audience</td><td>removes guessing; vague in, vague out</td></tr>
-      <tr><td><b>Role</b></td><td>"You are a…" (often in the <b>system prompt</b>)</td><td>sets expertise, tone and point of view</td></tr>
+      <tr><td><b>Role</b></td><td>"You are a…" (often in the <b>system prompt</b>: standing instructions the app sends before your messages)</td><td>sets expertise, tone and point of view</td></tr>
       <tr><td><b>Context</b></td><td>background, goal, who will read it, constraints</td><td>the model can't know your situation unless you say it</td></tr>
       <tr><td><b>Examples (few-shot)</b></td><td>a few input → output pairs</td><td>shows the exact labels, style and format you want</td></tr>
       <tr><td><b>Step by step</b></td><td>"think step by step", or list the steps</td><td>helps with reasoning tasks; makes the logic easy to check</td></tr>
@@ -1904,7 +1904,7 @@ print(prompt)`, "generate.py");
     <tbody>
       <tr><td><b>Focus</b></td><td>how you <b>write</b> the request</td><td>what the model <b>sees</b> when it answers</td></tr>
       <tr><td><b>Includes</b></td><td>instructions, role, examples, output format</td><td>all of that, plus retrieved documents (RAG), tool definitions and results, memories, chat history</td></tr>
-      <tr><td><b>Done by</b></td><td>mostly a person, once per task</td><td>mostly the app or agent harness, automatically, at every step</td></tr>
+      <tr><td><b>Done by</b></td><td>mostly a person, once per task</td><td>mostly the app or agent harness (lesson 7), automatically, at every step</td></tr>
       <tr><td><b>Analogy</b></td><td>writing a clear brief</td><td>also packing the right folder of papers to go with it, and nothing extra</td></tr>
     </tbody>
   </table>

@@ -14,14 +14,14 @@ A **self-paced online course, completely free**, that explains how modern AI wor
 
 1. **What is AI?**: AI and machine learning, and the three ways machines learn: supervised, unsupervised and reinforcement; classification vs. regression, with object detection in a car's front camera as an example
 2. **Learning from Data**: what a model is (a formula with parameters, like `y = a·x + b`), how training finds the best parameters (house prices), why predictions can be wrong, and overfitting vs. underfitting
-3. **Neural Networks**: the same idea with many more parameters: layers of neurons with weights, and how a network learns by adjusting them
+3. **Neural Networks**: the same idea with many more parameters: layers of neurons with weights, how a network learns by adjusting them (gradient descent), and why training large models needs powerful GPUs
 
 **Part B · Generative AI in practice** (the main focus, about 80%)
 
-4. **Generative AI and LLMs**: what generative AI can create (text, code, images, audio, video), tokens and the context window, pre-training and instruction tuning, the Transformer, next-token prediction and temperature
+4. **Generative AI and LLMs**: what generative AI can create (text, code, images, audio, video), tokens and the context window, pre-training and instruction tuning (base vs. instruction-tuned models), the Transformer, next-token prediction, and which temperature to use for what
 5. **Prompt Engineering**: clear instructions and roles, context and examples (few-shot), step-by-step thinking, structured output, and context engineering: choosing everything the model sees
 6. **RAG**: why LLMs need external knowledge, embeddings, chunking and vector databases, and the retrieve → augment → generate flow
-7. **AI Agents**: agent = LLM + harness (the program that gives the model tools and runs the loop), tool calling, reasoning and planning, the think → act → observe loop, short- and long-term memory
+7. **AI Agents**: agent = LLM + harness (the program that gives the model tools and runs the loop), tool calling, reasoning and planning, the think → act → observe loop, short- and long-term memory, and when to use a chat, RAG or an agent
 8. **MCP and Skills**: MCP connects agents to tools and data; Skills teach them how to do a task
 9. **Fine-tuning**: what it is, and choosing between prompt engineering, RAG and fine-tuning
 10. **Limitations and Risks**: hallucinations, bias, privacy, prompt injection, and when a person must review AI output

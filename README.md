@@ -10,6 +10,23 @@ A **self-paced online course, completely free**, that explains how modern AI wor
 
 ## What you'll learn
 
+- How machines learn from data, from a simple line to neural networks and LLMs.
+- How to use generative AI well: prompting, context engineering, RAG, agents, MCP and fine-tuning.
+- When AI can be wrong, its main risks, and when a person must check it.
+
+## Main audience
+
+Beginners who want to understand and use modern AI, especially generative AI. No coding or maths background needed.
+
+- **Professionals who use AI tools at work:** managers, analysts, marketers, HR, teachers and consultants who want to know how these tools work, how to prompt well and when to trust the answers.
+- **People who make decisions about AI projects:** product owners, team leads, and IT and business managers choosing between prompting, RAG, agents and fine-tuning.
+- **Students and career changers** who want a clear first map of the field.
+- **Developers new to AI** who want the big picture, with short code sketches, before going deeper.
+
+It isn't aimed at ML engineers or data scientists looking for maths, real training code or hands-on programming exercises.
+
+## Course outline
+
 **Part A · Foundations** (short and high-level, about 20% of the course)
 
 1. **What is AI?**: AI and machine learning, and the three ways machines learn: supervised, unsupervised and reinforcement; classification vs. regression, with object detection in a car's front camera as an example

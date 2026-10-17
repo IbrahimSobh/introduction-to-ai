@@ -2,6 +2,8 @@
 
 A **self-paced online course, completely free**, that explains how modern AI works: from the basics of machine learning and neural networks to the tools people use every day, including large language models, prompt engineering, RAG, AI agents, MCP and skills, and fine-tuning, plus the risks to watch for. No coding or maths background needed.
 
+<sub><i>Created by <a href="https://www.linkedin.com/in/ibrahim-sobh-phd-8681757/">Ibrahim Sobh, PhD</a></i></sub>
+
 **The certificate is free too.** No sign-up and no fees: pass the final quiz and get a certificate with your name.
 
 ## 🚀 Take the course: [ibrahimsobh.github.io/introduction-to-ai](https://ibrahimsobh.github.io/introduction-to-ai/)

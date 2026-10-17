@@ -73,6 +73,14 @@ header.top {
 }
 header.top .brand { font-weight: 700; font-size: 1.05rem; margin-right: auto; }
 header.top label { font-size: .85rem; color: var(--text-2); display: flex; align-items: center; gap: 8px; }
+@media (max-width: 560px) {
+  header.top { gap: 8px; padding: 0 16px; }
+  header.top .brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .95rem; }
+  header.top label { font-size: 0; gap: 6px; }
+  header.top label #speedVal { font-size: .85rem; }
+  header.top #speed { width: 72px !important; }
+  header.top #themeBtn { flex: none; white-space: nowrap; }
+}
 .layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); }
 nav.side {
   position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto;

@@ -881,27 +881,27 @@ const AI = (() => {
     <div class="code"></div>
   </div>
   </div>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Type</th><th>Learns from</th><th>Simple example</th></tr></thead>
     <tbody>
       <tr><td><b>Supervised</b></td><td>examples <b>with</b> the right answers (labels)</td><td>emails marked "spam" (unwanted junk mail) or "not spam" → classify new emails</td></tr>
       <tr><td><b>Unsupervised</b></td><td>examples <b>without</b> answers</td><td>customer data → discover groups of similar customers</td></tr>
       <tr><td><b>Reinforcement</b></td><td>trial and error, with <b>rewards</b> and penalties</td><td>a robot or game player learns which moves lead to a win</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p><b>Clustering</b> means letting the computer sort examples into groups of similar ones. It is the most common kind of unsupervised learning. <b>In practice:</b> a shop groups its customers by behaviour, then treats each group differently: a discount to win back occasional shoppers, deals for bargain hunters, early access for big spenders. Nobody labelled the customers first; the groups came from the data, and the shop chose how many groups were useful.</p>
   <style>#whatis [aria-pressed="true"] { background: var(--surface-2); border-color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); }</style>
 
   <h3>Classification and regression</h3>
   <p>Supervised learning answers two kinds of questions. <b>Classification</b> picks a <b>category</b> from a fixed list. <b>Regression</b> predicts a <b>number</b> that can take any value.</p>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th></th><th>Classification</th><th>Regression</th></tr></thead>
     <tbody>
       <tr><td><b>Predicts</b></td><td>a category from a fixed list</td><td>a number that can take any value, such as 254.7 (called a <i>continuous</i> number)</td></tr>
       <tr><td><b>Asks</b></td><td>"Which one?"</td><td>"How much?" or "Where?" (see the car camera below)</td></tr>
       <tr><td><b>Example</b></td><td>spam or not spam (the demo above)</td><td>a house price (lesson 2)</td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <h4>Both together: a car's front camera</h4>
   <p>Many real systems do both at once. In <b>object detection</b>, the front camera of a car finds every object in each picture the camera takes. For each one it predicts <b>what</b> it is and <b>where</b> it is.</p>
@@ -1255,14 +1255,14 @@ path = agent.best_path(start)            # after learning`,
     <div class="code"></div>
   </div>
   </div>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th></th><th>Training error</th><th>Test error</th><th>What's happening</th></tr></thead>
     <tbody>
       <tr><td><b>Underfitting</b></td><td>high</td><td>high</td><td>the model is too simple to capture the pattern</td></tr>
       <tr><td><b>Good fit</b></td><td>low</td><td>low</td><td>it learned the real pattern and <b>generalises</b> to new data</td></tr>
       <tr><td><b>Overfitting</b></td><td>very low</td><td>high</td><td>it memorised the training data, noise included, and fails on new data</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <div class="callout tip">Overfitting is like memorising last year's exam answers: perfect on those questions, lost on new ones. More (and better) data, simpler models and testing on held-out data all help.</div>
 
   <h3>Where it shows up</h3>
@@ -1430,14 +1430,14 @@ test_error  = model.error(test)      # how well it handles NEW data`;
   <p>Think of a team passing a decision along. The first row reads the inputs, each next row combines what the row before reported, giving more say to colleagues it trusts more (bigger weights). The last row gives the answer. Training is the team learning whom to trust.</p>
   <div class="callout tip"><b>Same idea as lesson 2, bigger model.</b> A neural network is still a model with parameters: its <b>weights</b>, plus a <b>bias</b> in each neuron (a small extra number, like <code>b</code> in the line). Two things change: it has many more parameters, and each neuron bends its result, so together they can draw curves instead of a straight line (<b>nonlinear</b>). Training is the same: find the parameter values that make the predictions right.</div>
   <p>The task in the demo below: a light should be <b>on</b> when exactly one of two switches is on (this is called XOR). Each switch is a number: 0 = off, 1 = on. No single straight line can separate the "on" cases from the "off" ones, so the network needs an extra middle layer of neurons (a <b>hidden layer</b>, explained below the demo).</p>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Model</th><th>Parameters</th><th>Shape</th><th>Output</th></tr></thead>
     <tbody>
       <tr><td><b>Line</b> (lesson 2)</td><td>2 (<code>a</code>, <code>b</code>)</td><td>straight</td><td>a price: a number (regression)</td></tr>
       <tr><td><b>The network below</b></td><td>13: 9 weights (2 inputs × 3 hidden neurons, plus 3 hidden × 1 output) and 4 biases (one in each hidden and output neuron)</td><td>curved (nonlinear)</td><td>light on or off: a category (classification)</td></tr>
       <tr><td><b>A large language model</b> (LLM, lesson 4)</td><td>billions</td><td>very flexible</td><td>the next word or word piece (a <b>token</b>), picked from a fixed vocabulary</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>Whether the output is a category or a number, training works the same way: adjust the parameters to reduce the error.</p>
 
   <div class="w-nn">
@@ -1621,7 +1621,7 @@ for epoch in range(1500):
   <p class="lead"><b>Generative AI</b> creates new content (text, images, audio, video, code) instead of only sorting or predicting labels. A <b>large language model (LLM)</b> is a generative model for text: a very large neural network trained on huge amounts of text to predict what comes next. It is the same idea as the line in lesson 2: a model whose parameters are learned from data, only with <b>billions</b> of them.</p>
   <p>Think of an extremely well-read autocomplete. Your phone's keyboard suggests the next word from a few common phrases. An LLM does the same job at a vastly larger scale, having read a large share of the public internet and many books, so its "next word" can continue a story, answer a question or write working code.</p>
   <h3>Not only text</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Generative AI creates</th><th>Example request → result</th></tr></thead>
     <tbody>
       <tr><td><b>Text</b></td><td>"Summarise this report" → a short summary (LLMs, the focus of this course)</td></tr>
@@ -1630,7 +1630,7 @@ for epoch in range(1500):
       <tr><td><b>Audio</b></td><td>a written text → natural-sounding speech, or a description → a short piece of music</td></tr>
       <tr><td><b>Video</b></td><td>"A video filmed from high above a beach at sunset" → a short clip</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>Many models are also <b>multimodal</b>: they can <b>read</b> images, audio or documents, not only create them. The rest of this course focuses on text and LLMs, because most AI tools at work are built on them.</p>
 
   <h3>Tokens and the context window</h3>
@@ -1676,13 +1676,13 @@ for epoch in range(1500):
     <li><b>Instruction tuning</b> trains it further on examples of instructions paired with good responses, so it learns to act as an assistant.</li>
     <li><b>Preference tuning</b> (for example <b>RLHF</b>, reinforcement learning from human feedback) uses people's ratings of answers to make it more helpful, honest and safe.</li>
   </ul>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th></th><th>Trained to</th><th>You type: "What is the capital of France?"</th></tr></thead>
     <tbody>
       <tr><td><b>Base model</b></td><td>predict the next token</td><td>"What is the capital of Germany? What is the capital of Italy?…" (it just continues the text)</td></tr>
       <tr><td><b>Instruction-tuned model</b></td><td>answer questions and follow instructions</td><td>"The capital of France is Paris."</td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <h3>The Transformer, at a high level</h3>
   <p>Most LLMs are built on the <b>Transformer</b> architecture (a particular design for the network, introduced in 2017). Its key idea is <b>attention</b>: when processing each token, the model looks at all the other tokens in the context and decides which ones matter most for understanding it.</p>
@@ -1715,14 +1715,14 @@ for epoch in range(1500):
   <h3>Next-token prediction and temperature</h3>
   <p>An LLM writes one token at a time. At each step it gives every possible next token a <b>probability</b>, <b>picks one</b>, adds it to the text, and repeats. Usually it <b>samples</b> (picks at random, weighted by probability), which is why the same prompt can give different answers. <b>Temperature</b> controls how adventurous the picks are: low temperature almost always takes the most likely token; high temperature spreads the chances out.</p>
   <p>Think of asking two friends to finish a sentence. The careful one always picks the obvious word. The adventurous one surprises you: sometimes brilliantly, sometimes oddly. Low temperature is the careful friend; high temperature is the adventurous one.</p>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Temperature</th><th>Behaviour</th><th>Use it for</th></tr></thead>
     <tbody>
       <tr><td><b>Low</b> (about 0–0.3)</td><td>consistent: picks the most likely tokens</td><td>facts, code, extracting data, classifying</td></tr>
       <tr><td><b>Medium</b> (about 0.5–0.8)</td><td>balanced</td><td>everyday chat, explanations, emails</td></tr>
       <tr><td><b>High</b> (about 1 or more)</td><td>varied and surprising, but can drift or make more mistakes</td><td>brainstorming, story ideas, slogans, poems</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>Chat apps choose the temperature for you. Developers set it when they build their own apps on top of an LLM.</p>
   <div class="w-gen">
   <div class="grid2">
@@ -1955,7 +1955,7 @@ print(prompt)`, "generate.py");
   </div>
 
   <h3>The main techniques</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Technique</th><th>What you add</th><th>Why it helps</th></tr></thead>
     <tbody>
       <tr><td><b>Clear instructions</b></td><td>exactly what to do, the options, length and audience</td><td>removes guessing; vague in, vague out</td></tr>
@@ -1965,12 +1965,12 @@ print(prompt)`, "generate.py");
       <tr><td><b>Step by step</b></td><td>"think step by step", or list the steps</td><td>helps with reasoning tasks; makes the logic easy to check</td></tr>
       <tr><td><b>Structured output</b></td><td>"answer as a table / list / JSON with keys…"</td><td>easy to read, and easy for programs to use</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <div class="callout tip">Treat prompts like code: test them on several real inputs, change one thing at a time, and keep the versions that work. Many modern models also "think" internally before answering, but clear steps and a clear output format still help.</div>
 
   <h3>From prompt engineering to context engineering</h3>
   <p>A prompt is only part of what the model sees. <b>Context engineering</b> is deciding <b>everything</b> that goes into the context window for each request to the model: the instructions, but also the right documents, the <b>tools</b> it may use and <b>memories</b> of earlier chats (both in lesson 7), the conversation so far, and what to leave out or summarise so the important parts fit.</p>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th></th><th>Prompt engineering</th><th>Context engineering</th></tr></thead>
     <tbody>
       <tr><td><b>Focus</b></td><td>how you <b>write</b> the request</td><td>what the model <b>sees</b> when it answers</td></tr>
@@ -1978,7 +1978,7 @@ print(prompt)`, "generate.py");
       <tr><td><b>Done by</b></td><td>mostly a person, once per task</td><td>mostly the app, or the program around an agent (its <i>harness</i>, lesson 7), automatically, at every step</td></tr>
       <tr><td><b>Analogy</b></td><td>writing a clear brief</td><td>also packing the right folder of papers to go with it, and nothing extra</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>The model only knows what's in its context, so a great prompt with the wrong documents still gives a wrong answer, and too much irrelevant text can bury the important part. RAG (lesson 6) and agents (lesson 7) are context engineering in action.</p>
 
   <h3>Where it shows up</h3>
@@ -2313,7 +2313,7 @@ answer = llm(prompt)`, "rag.py");
 
   <h3>Agent = LLM + harness</h3>
   <p>The <b>LLM</b> is the brain: it reads, reasons and decides. On its own it can only turn text into text. The <b>harness</b> is the program around it that does everything else:</p>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Harness job</th><th>What it means</th><th>In the demo above</th></tr></thead>
     <tbody>
       <tr><td><b>Tools</b></td><td>offers the model a list of tools, and runs the ones it asks for</td><td><code>get_weather</code>, <code>calculator</code></td></tr>
@@ -2321,7 +2321,7 @@ answer = llm(prompt)`, "rag.py");
       <tr><td><b>Context and memory</b></td><td>decides what goes into the context window (context engineering, lesson 5), and saves and recalls long-term memories</td><td>"home city: Paris"</td></tr>
       <tr><td><b>Safety</b></td><td>sets permissions and limits, and asks a person to approve risky actions</td><td>only two harmless tools</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <div class="callout tip"><b>Same LLM, different harness, different agent.</b> A coding agent, a research agent and a customer-support agent can all use the same model. Their harnesses give them different tools, instructions and rules, which is why the harness matters as much as the model.</div>
   <p><b>Tools</b> are small programs (called <i>functions</i>) the harness can run, each with a <b>name</b>, a <b>description</b> and the <b>inputs</b> it needs, so the model knows when and how to use it:</p>
   <div class="code ag-tooldef" style="max-height:none;margin:8px 0 16px"></div>
@@ -2339,24 +2339,24 @@ answer = llm(prompt)`, "rag.py");
   <p>Before acting, the agent <b>reasons</b> about the goal and <b>plans</b> the steps ("first get the forecast, then convert the temperature"). Then it runs the loop: <b>think → act → observe → repeat</b>, adjusting the plan when a result is surprising, until it can answer or hits a limit set by the harness (for example a maximum number of steps). This cycle is often called the <b>agent loop</b>, and the pattern behind it is known as <b>ReAct</b> (<b>Re</b>ason + <b>Act</b>): the model alternates between reasoning about what to do next and acting with a tool, and uses each result to decide its next step.</p>
 
   <h3>Memory: short-term and long-term</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Memory</th><th>Where it lives</th><th>Example</th></tr></thead>
     <tbody>
       <tr><td><b>Short-term</b></td><td>the context window: the current conversation, tool calls and results</td><td>the forecast it just looked up</td></tr>
       <tr><td><b>Long-term</b></td><td>outside the model (a database, files, a vector database as in lesson 6), retrieved when relevant</td><td>"home city: Paris", "prefers °F" (Fahrenheit), saved from earlier chats</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>Short-term memory is limited by the context window and is gone when the session ends. Long-term memory is saved and fetched by the harness, usually just like RAG.</p>
 
   <h3>Chat, RAG or agent?</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>What you need</th><th>Use</th><th>Example</th></tr></thead>
     <tbody>
       <tr><td>an answer from general knowledge</td><td><b>plain chat</b></td><td>"Explain how a rainbow forms."</td></tr>
       <tr><td>answers from your own documents</td><td><b>RAG</b> (lesson 6)</td><td>"How many vacation days do I get?"</td></tr>
       <tr><td>several steps, or real actions</td><td><b>an agent</b></td><td>"Find the three cheapest flights, check my calendar and draft an email."</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <p>Agents are slower and cost more, so use the simplest option that does the job.</p>
 
   <h3>Where it shows up</h3>
@@ -2495,7 +2495,7 @@ while steps < 10:
   </ul>
 
   <h3>How they work together</h3>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th></th><th>MCP</th><th>Skills</th></tr></thead>
     <tbody>
       <tr><td>Gives the agent</td><td><b>access</b>: tools and data in other systems</td><td><b>know-how</b>: how to do a task well</td></tr>
@@ -2503,7 +2503,7 @@ while steps < 10:
       <tr><td>Example</td><td>a GitHub server with a <code>list_merged_prs</code> tool</td><td>a "release-notes" skill with the team's format</td></tr>
       <tr><td>Together</td><td colspan="2">the skill says <i>what</i> to gather and <i>how</i> to present it; MCP tools <i>fetch</i> the data.</td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <h3>Where it shows up</h3>
   <ul>
@@ -2622,7 +2622,7 @@ while steps < 10:
     <div class="code"></div>
   </div>
   </div>
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th></th><th>Prompt engineering</th><th>RAG</th><th>Fine-tuning</th></tr></thead>
     <tbody>
       <tr><td>Changes</td><td>the instructions</td><td>the information in the prompt</td><td>the model's weights</td></tr>
@@ -2630,7 +2630,7 @@ while steps < 10:
       <tr><td>Effort and cost</td><td>low: minutes</td><td>medium: split, embed and store your documents</td><td>higher: collect data, train, evaluate</td></tr>
       <tr><td>Updating</td><td>edit the prompt</td><td>update the documents</td><td>train again</td></tr>
     </tbody>
-  </table>
+  </table></div>
   <div class="callout tip"><b>Rule of thumb:</b> start with prompt engineering. Add RAG when the model needs knowledge it doesn't have. Consider fine-tuning when you need behaviour that good prompts still can't produce reliably. They also combine: a fine-tuned model can still use RAG.</div>
 
   <h3>Where it shows up</h3>
@@ -2690,7 +2690,7 @@ model.evaluate(test_examples)          # always test on held-out data`, "fine_tu
   <p class="lead">AI is powerful but not perfect. Knowing its main limitations (hallucinations, bias, privacy and prompt injection) is what lets you use it safely, and decide when a person must check the result.</p>
   <p>Think of AI as a very fast, very confident new trainee. Great for drafts and research, but you wouldn't let them sign contracts or send money without someone checking.</p>
 
-  <table class="cx">
+  <div style="overflow-x:auto"><table class="cx">
     <thead><tr><th>Risk</th><th>What it is</th><th>How to reduce it</th></tr></thead>
     <tbody>
       <tr><td><b>Hallucinations</b></td><td>confident, fluent answers that are false or made up (fake facts, quotes, sources)</td><td>ground answers with RAG and sources, ask for citations, verify important facts</td></tr>
@@ -2698,7 +2698,7 @@ model.evaluate(test_examples)          # always test on held-out data`, "fine_tu
       <tr><td><b>Privacy and data security</b></td><td>sensitive data put into prompts may be stored or seen by others, or leak through outputs</td><td>follow your organisation's rules, use approved tools, remove personal and secret data</td></tr>
       <tr><td><b>Prompt injection</b></td><td>instructions hidden in content the AI reads (web pages, emails, files) that try to take control of it</td><td>treat outside content as data, give tools only the permissions needed, require approval for risky actions</td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <h3>Prompt injection: a key risk for agents</h3>
   <p>An agent that reads outside content can't always tell <b>your</b> instructions from instructions <b>hidden in that content</b>. Here an agent is asked to summarise a web page that contains a hidden command. The red text is hidden inside the page's code, so a person viewing the page never sees it, but an AI reading the page does. Turn the defences on and off to see what happens.</p>

@@ -163,7 +163,7 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
   background-image: radial-gradient(var(--border) 1px, transparent 1px); background-size: 18px 18px;
 }
 .viz svg { display: block; max-width: 100%; }
-.viz .caption { position: absolute; top: 8px; left: 12px; font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.viz .caption { display: block; margin: 0 0 8px; font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
 .node {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 46px; height: 46px; padding: 0 8px; border-radius: 9px;
@@ -1265,7 +1265,7 @@ path = agent.best_path(start)            # after learning`,
   <h3>Overfitting and underfitting</h3>
   <p>To check a model honestly, we keep some data aside as a <b>test set</b> that it never sees during training. A good model does well on <b>both</b> training and test data. Pick the model's complexity below and compare the two errors.</p>
   <p>Complexity here means the number of <b>parameters</b>. Complexity 1 is the straight line, with 2 parameters (<code>a</code> and <code>b</code>); complexity 9 is a curve with 10. More parameters make a more flexible model, which can fit the real pattern, or the <b>noise</b>: the small random errors in each example (a typo, a lucky sale) that are not part of the real pattern.</p>
-  <p>This demo uses new, made-up data (not house prices). Its real pattern is a smooth wave, and each point has a little random noise added.</p>
+  <p>This demo uses new, made-up data (not house prices). Its real pattern is a smooth wave, and each point has a little random noise added. Filled dots (●) are the <b>training data</b> the model learns from; hollow dots (○) are <b>test data</b>, kept hidden during training so we can check the model on examples it hasn't seen. The error is the average squared distance between the curve and the points: smaller is better.</p>
   <div class="w-fit">
   <div class="grid2">
     <div class="card">
@@ -1275,7 +1275,7 @@ path = agent.best_path(start)            # after learning`,
         <button class="secondary always ft-pre" data-d="3">Just right</button>
         <button class="secondary always ft-pre" data-d="9">Too complex</button>
       </div>
-      <div class="viz" style="min-height:300px"><span class="caption">● training data · ○ test data (hidden during training) · error = average squared distance between the curve and the points (smaller is better)</span><div class="ft-plot" style="padding-top:18px"></div>
+      <div class="viz" style="min-height:300px"><span class="caption">● training data · ○ test data · error (smaller is better)</span><div class="ft-plot" style="padding-top:18px"></div>
         <div class="meter"><span style="width:96px">Training error</span><div class="bar"><i class="ft-tr"></i></div><b class="ft-trv">—</b></div>
         <div class="meter"><span style="width:96px">Test error</span><div class="bar"><i class="hot ft-te"></i></div><b class="ft-tev">—</b></div>
       </div>
@@ -1469,6 +1469,7 @@ test_error  = model.error(test)      # how well it handles NEW data`;
   </table></div>
   <p>Whether the output is a category or a number, training works the same way: adjust the parameters to reduce the error.</p>
 
+  <p>In the demo, the network has 2 inputs (the switches), 3 <b>hidden neurons</b> in the middle, between input and output, and 1 output (the light). Each line is a weight: a <b>blue</b> line is a positive weight, an <b>orange</b> line is a negative weight (it pushes the next neuron's value down), and a thicker line means a bigger weight.</p>
   <div class="w-nn">
   <div class="grid2">
     <div class="card">
@@ -1480,7 +1481,7 @@ test_error  = model.error(test)      # how well it handles NEW data`;
         <button class="secondary nn-x" data-i="0">0, 0</button><button class="secondary nn-x" data-i="1">0, 1</button>
         <button class="secondary nn-x" data-i="2">1, 0</button><button class="secondary nn-x" data-i="3">1, 1</button>
       </div>
-      <div class="viz" style="min-height:300px"><span class="caption">2 inputs → 3 hidden neurons (in the middle, between input and output) → 1 output · blue = positive weight, orange = negative (it pushes the next neuron's value down) · thicker line = bigger weight</span>
+      <div class="viz" style="min-height:300px"><span class="caption">2 inputs → 3 hidden neurons → 1 output</span>
         <div class="nn-plot" style="padding-top:20px"></div>
         <div class="meter"><span>Error</span><div class="bar"><i class="hot nn-err"></i></div><b class="nn-errv">—</b></div>
         <table class="mini-table nn-table"></table>
@@ -1753,6 +1754,7 @@ for epoch in range(1500):
     </tbody>
   </table></div>
   <p>Chat apps choose the temperature for you. Developers set it when they build their own apps on top of an LLM.</p>
+  <p>The demo below uses a tiny, made-up language model that knows only a few words, just to show the idea: at each step it shows the probability of every possible next token, then picks one.</p>
   <div class="w-gen">
   <div class="grid2">
     <div class="card">
@@ -1761,7 +1763,7 @@ for epoch in range(1500):
         <button class="gn-go">▶ Generate</button>
         <button class="secondary gn-clear">Clear</button>
       </div>
-      <div class="viz" style="min-height:270px"><span class="caption">A tiny, made-up language model (only a few words), to show the idea · next-token probabilities</span>
+      <div class="viz" style="min-height:270px"><span class="caption">A tiny, made-up model · next-token probabilities</span>
         <div class="gen gn-text"></div>
         <div class="cand gn-cand"></div>
       </div>
@@ -2108,6 +2110,7 @@ print(prompt)`, "generate.py");
 
   <h3>Embeddings: meaning as numbers</h3>
   <p>An <b>embedding model</b> turns a piece of text into a list of numbers (a <b>vector</b>) that captures its <b>meaning</b>. Picture each list of numbers as an arrow. Texts with similar meanings get arrows pointing the same way, even if they share no words. <b>Cosine similarity</b> scores how alike two arrows' directions are: 1 = same direction (same meaning), 0 = unrelated. That's why a search for "cheap flights" can find a page about "low-cost airfares", even though they share no words.</p>
+  <p>In the demo, each sentence gets 3 numbers: how much it is about animals, about money and about weather. To fit them on a flat map, the 3 numbers are squeezed into 2 positions, so sentences with similar meanings land close together.</p>
   <div class="w-emb">
   <div class="grid2">
     <div class="card">
@@ -2117,7 +2120,7 @@ print(prompt)`, "generate.py");
         <button class="secondary always em-q" data-q="1">"how to save money"</button>
         <button class="secondary always em-q" data-q="2">"is it going to rain?"</button>
       </div>
-      <div class="viz" style="min-height:300px"><span class="caption">Sentences placed on a flat map · each has 3 numbers (animals, money, weather), squeezed into 2 positions so they fit on the page</span><div class="em-plot" style="padding-top:18px"></div></div>
+      <div class="viz" style="min-height:300px"><span class="caption">Sentences placed on a flat map by meaning</span><div class="em-plot" style="padding-top:18px"></div></div>
       <div class="status"></div>
     </div>
     <div class="card" style="box-shadow:none">

@@ -164,6 +164,10 @@ input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px s
 }
 .viz svg { display: block; max-width: 100%; }
 .viz .caption { display: block; margin: 0 0 8px; font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.fstrip { font: 600 .84rem/1.5 var(--mono); background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 6px; padding: 6px 10px; margin: 0 0 10px; color: var(--text); }
+.fstrip span { display: inline-block; margin-right: 16px; white-space: nowrap; }
+.fstrip span:last-child { margin-right: 0; }
+@media (max-width: 560px) { .fstrip { font-size: .78rem; overflow-wrap: anywhere; } .fstrip span { white-space: normal; display: block; margin-right: 0; } }
 .node {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 46px; height: 46px; padding: 0 8px; border-radius: 9px;
@@ -903,7 +907,7 @@ const AI = (() => {
         <span class="wy-k" hidden><button class="secondary wy-kb" data-k="2" aria-pressed="false">2 groups</button> <button class="secondary wy-kb" data-k="3" aria-pressed="true">3 groups</button></span>
         <button class="wy-run">▶ Run</button>
       </div>
-      <div class="viz wy-viz" style="min-height:300px"><span class="caption wy-cap"></span><div class="wy-plot" style="padding-top:18px"></div></div>
+      <div class="viz wy-viz" style="min-height:300px"><span class="caption wy-cap"></span><div class="fstrip wy-fs" hidden><span>each customer joins its nearest ✕</span><span>each ✕ moves to the average of its group</span></div><div class="wy-plot" style="padding-top:18px"></div></div>
       <div class="status"></div>
       <div class="log"></div>
     </div>
@@ -1042,6 +1046,7 @@ path = agent.best_path(start)            # after learning`,
     root.querySelectorAll(".wy-mode").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.m === m)));
     cp = DS.code($(".code"), SRC[m], m === "rl" ? "reinforcement.py" : m === "uns" ? "unsupervised.py" : "supervised.py");
     $(".wy-k").hidden = m !== "uns";
+    $(".wy-fs").hidden = m !== "uns";
     if (m === "sup") {
       cap.textContent = "Emails · blue = not spam · orange = spam";
       const P = frame("links in the email", "\"free!\" words");
@@ -1242,9 +1247,8 @@ path = agent.best_path(start)            # after learning`,
         <label class="inl"><input type="checkbox" class="hs-bad" style="accent-color:var(--bad)"> add bad data (typos in prices)</label>
         <button class="secondary hs-reset">Reset</button>
       </div>
-      <div class="viz" style="min-height:300px"><span class="caption">House sales · size vs price</span><div class="hs-plot" style="padding-top:18px"></div>
+      <div class="viz" style="min-height:300px"><span class="caption">House sales · size vs price</span><div class="fstrip hs-fs"></div><div class="hs-plot" style="padding-top:18px"></div>
         <div class="meter"><span>Average error</span><div class="bar"><i class="hot hs-err"></i></div><b class="hs-errv">—</b></div>
-        <div class="hs-par" style="font:600 .85rem var(--mono);color:var(--text-2);padding:4px 12px 8px">price = a × size + b · <span style="color:var(--hot)">a = 0.00 · b = 0</span></div>
       </div>
       <div class="status"></div>
       <div class="log"></div>
@@ -1275,7 +1279,7 @@ path = agent.best_path(start)            # after learning`,
         <button class="secondary always ft-pre" data-d="3">Just right</button>
         <button class="secondary always ft-pre" data-d="9">Too complex</button>
       </div>
-      <div class="viz" style="min-height:300px"><span class="caption">● training data · ○ test data · error (smaller is better)</span><div class="ft-plot" style="padding-top:18px"></div>
+      <div class="viz" style="min-height:300px"><span class="caption">● training data · ○ test data · error (smaller is better)</span><div class="fstrip ft-fs"></div><div class="ft-plot" style="padding-top:18px"></div>
         <div class="meter"><span style="width:96px">Training error</span><div class="bar"><i class="ft-tr"></i></div><b class="ft-trv">—</b></div>
         <div class="meter"><span style="width:96px">Test error</span><div class="bar"><i class="hot ft-te"></i></div><b class="ft-tev">—</b></div>
       </div>
@@ -1341,7 +1345,12 @@ price = a * 120 + b                  # predict a new house`;
     if (showRes) data().forEach(([x, y]) => resG.append(DS.svg("line", { x1: P.X(x), x2: P.X(x), y1: P.Y(y), y2: P.Y(clampY(w * x + b)), stroke: "var(--hot)", "stroke-width": 1.5, "stroke-dasharray": "3 3", opacity: 0.7 })));
   }
   const mae = () => { const d = data(); return d.reduce((s, [x, y]) => s + Math.abs(w * x + b - y), 0) / d.length; };
-  function showPar() { const sp = $(".hs-par span"); if (sp) sp.textContent = `a = ${w.toFixed(2)} · b = ${Math.round(b)}`; }
+  // formula strip: the model with its current parameters and the slider's size, then the average error
+  function showPar() {
+    const s = +$(".hs-size").value, p = Math.round(+w.toFixed(2) * s + Math.round(b));
+    $(".hs-fs").innerHTML = `<span>price = a × size + b</span><span>= ${w.toFixed(2)} × ${s} + ${Math.round(b)} ≈ $${p}k</span>`
+      + `<span>average error = average of |prediction − price|</span><span>= $${Math.round(mae())}k</span>`;
+  }
   function showErr() { showPar(); const e = mae(); $(".hs-err").style.width = Math.min(100, e / 3) + "%"; $(".hs-errv").textContent = "$" + Math.round(e) + "k"; }
   async function train() {
     showRes = true; draw(); w = 0; b = 0; setLine(); showErr();
@@ -1374,7 +1383,7 @@ price = a * 120 + b                  # predict a new house`;
     say(`A ${s} m² house: ${w.toFixed(2)} × ${s} + ${Math.round(b)} ≈ <b>$${Math.round(+w.toFixed(2) * s + Math.round(b))}k</b>. The model never saw this house; it used the parameters it learned. It is a best guess: like the sales above, the real price may be some way above or below it (about $${Math.round(mae())}k on average).`);
     DS.log(logEl, `predict(${s} m²) ≈ $${Math.round(+w.toFixed(2) * s + Math.round(b))}k`, "ok");
   }
-  $(".hs-size").addEventListener("input", () => { $(".hs-sv").textContent = $(".hs-size").value + " m²"; });
+  $(".hs-size").addEventListener("input", () => { $(".hs-sv").textContent = $(".hs-size").value + " m²"; showPar(); });
   $(".hs-train").onclick = () => DS.run(root, train);
   $(".hs-pred").onclick = () => DS.run(root, predict);
   $(".hs-reset").onclick = () => { if (!root.dataset.busy) { w = 0; b = 0; trained = false; showRes = false; draw(); showErr(); cp.clear(); say("Press <b>Train</b> to fit a line to the house sales."); } };
@@ -1431,6 +1440,7 @@ test_error  = model.error(test)      # how well it handles NEW data`;
     const bar = v => Math.min(100, Math.sqrt(v) * 100) + "%";
     f$(".ft-tr").style.width = bar(tr); f$(".ft-te").style.width = bar(te);
     f$(".ft-trv").textContent = tr.toFixed(3); f$(".ft-tev").textContent = te > 9.99 ? te.toFixed(0) : te.toFixed(3);
+    f$(".ft-fs").innerHTML = `<span>error = average of (prediction − actual)²</span><span>training ${tr.toFixed(3)} · test ${f$(".ft-tev").textContent}</span>`;
     fcp.hl(2, 4, 5);
     f$(".status").innerHTML = d <= 1 ? "<b>Underfitting</b>: a straight line is too simple for this curve. Both errors are high."
       : d <= 4 ? "<b>Good fit</b>: the curve follows the real pattern. Both errors are low, so it works on new data too."
@@ -1482,6 +1492,7 @@ test_error  = model.error(test)      # how well it handles NEW data`;
         <button class="secondary nn-x" data-i="2">1, 0</button><button class="secondary nn-x" data-i="3">1, 1</button>
       </div>
       <div class="viz" style="min-height:300px"><span class="caption">2 inputs → 3 hidden neurons → 1 output</span>
+        <div class="fstrip nn-fs"></div>
         <div class="nn-plot" style="padding-top:20px"></div>
         <div class="meter"><span>Error</span><div class="bar"><i class="hot nn-err"></i></div><b class="nn-errv">—</b></div>
         <table class="mini-table nn-table"></table>
@@ -1583,8 +1594,19 @@ for epoch in range(1500):
     plotEl.append(s);
     paint();
   }
+  // formula strip: the neuron rule (with hidden neuron 1's real numbers while an example runs), then the error
+  function strip(ex) {
+    const f = v => v.toFixed(2), t = v => (v < 0 ? "− " : "+ ") + Math.abs(v).toFixed(2);
+    let first = "<span>neuron = activation(w₁ × x₁ + w₂ × x₂ + b)</span>";
+    if (ex) {
+      const [w1, w2] = W1[0], b1 = B1[0];
+      first = `<span>hidden 1 = activation(${f(w1)} × ${ex[0]} ${t(w2)} × ${ex[1]} ${t(b1)})</span><span>= activation(${f(w1 * ex[0] + w2 * ex[1] + b1)}) = ${f(fwd(ex[0], ex[1]).h[0])}</span>`;
+    }
+    $(".nn-fs").innerHTML = first + `<span>error = average of (output − target)² = ${loss().toFixed(3)}</span>`;
+  }
   function paint() {
     edges.forEach(({ e, w }) => { const v = w(); e.setAttribute("stroke", v >= 0 ? "var(--s1)" : "var(--s2)"); e.setAttribute("stroke-width", (0.8 + Math.min(7, Math.abs(v) * 1.6)).toFixed(1)); e.setAttribute("opacity", "0.85"); });
+    strip();
     const L = loss();
     $(".nn-err").style.width = Math.min(100, L * 300) + "%"; $(".nn-errv").textContent = L.toFixed(3);
     const tb = $(".nn-table");
@@ -1606,7 +1628,7 @@ for epoch in range(1500):
     cp.hl(4); fill("i0", a); fill("i1", b);
     say(`Input: switch 1 = ${a}, switch 2 = ${b}.`); await DS.wait(0.9);
     const { h, o } = fwd(a, b);
-    cp.hl(5); h.forEach((v, j) => { fill("h" + j, v); nodes["h" + j].setAttribute("stroke", "var(--hot)"); });
+    cp.hl(5); h.forEach((v, j) => { fill("h" + j, v); nodes["h" + j].setAttribute("stroke", "var(--hot)"); }); strip([a, b]);
     say("Each hidden neuron multiplies the inputs by its weights, adds them up, and bends the result (with a function called tanh; the name doesn't matter) to a number between −1 and 1."); await DS.wait(1.4);
     h.forEach((_, j) => nodes["h" + j].setAttribute("stroke", "var(--accent)"));
     cp.hl(6); fill("o", o); nodes.o.setAttribute("stroke", (o > 0.5) === (t === 1) ? "var(--ok)" : "var(--bad)");
@@ -1682,6 +1704,7 @@ for epoch in range(1500):
         <button class="secondary always tk-clear">Clear</button>
       </div>
       <div class="viz" style="min-height:180px"><span class="caption">Your text as tokens (approximate split)</span>
+        <div class="fstrip tk-fs"></div>
         <div class="toks tk-out"></div>
         <div class="meter" style="margin-top:14px"><span style="width:110px">Window used</span><div class="bar"><i class="violet tk-bar"></i></div><b class="tk-used">—</b></div>
       </div>
@@ -1764,6 +1787,7 @@ for epoch in range(1500):
         <button class="secondary gn-clear">Clear</button>
       </div>
       <div class="viz" style="min-height:270px"><span class="caption">A tiny, made-up model · next-token probabilities</span>
+        <div class="fstrip gn-fs"></div>
         <div class="gen gn-text"></div>
         <div class="cand gn-cand"></div>
       </div>
@@ -1824,6 +1848,8 @@ window = 128_000                  # tokens (varies by model)`, "tokens.py");
     t$(".tk-bar").style.width = Math.min(100, used / win * 100) + "%";
     t$(".tk-bar").className = "violet tk-bar" + (used > win ? " hot" : "");
     t$(".tk-used").textContent = `${used.toLocaleString()} / ${win.toLocaleString()}`;
+    const pc = used / win * 100, pcs = pc < 1 ? pc.toFixed(2) : pc < 10 ? pc.toFixed(1) : pc.toFixed(0);
+    t$(".tk-fs").innerHTML = `<span>window used = tokens ÷ window</span><span>= ${used.toLocaleString()} ÷ ${win.toLocaleString()} = ${pcs}%${used > win ? " (doesn't fit)" : ""}</span><span>rule of thumb: 1 word ≈ 1.3 tokens</span>`;
     t$(".status").innerHTML = `<b>${toks.length} tokens</b> for ${text.length} characters (≈ ${(text.length / Math.max(1, toks.length)).toFixed(1)} characters per token). ` +
       (extra ? `Plus ${extra.toLocaleString()} tokens of documents. ` : "") +
       (used > win ? "<b style='color:var(--bad)'>Too much for this window:</b> the oldest or extra text must be cut, summarised, or only the relevant parts fetched when needed (RAG, lesson 6)." : `That uses ${(used / win * 100).toFixed(used / win < 0.01 ? 3 : 1)}% of a ${win.toLocaleString()}-token window.`) +
@@ -1905,6 +1931,13 @@ print(prompt)`, "generate.py");
   const PLACE = { castle: 2.0, forest: 1.8, sea: 1.0, mountains: 0.9, moon: 0.4 };
   const STEPS = [ADJ, NOUN, VERB, PREP, DET, PLACE, { ".": 3 }];
   const pick = (probs, r) => { let acc = 0; for (let i = 0; i < probs.length; i++) { acc += probs[i]; if (r < acc) return i; } return probs.length - 1; };
+  // formula strip: the softmax rule in words, then the top three chances for the current step at this temperature
+  function gstrip(table) {
+    const T = +g$(".gn-t").value, words = Object.keys(table), probs = AI.softmax(Object.values(table), T);
+    const top = words.map((w, i) => [w, probs[i]]).sort((a, b) => b[1] - a[1]).slice(0, 3);
+    g$(".gn-fs").innerHTML = `<span>chance = its score ÷ T, turned into %</span><span>all chances add up to 100%</span>`
+      + `<span>T = ${T.toFixed(1)}: ${top.map(([w, p]) => `${w === "." ? "“.”" : w} ${(p * 100).toFixed(0)}%`).join(" · ")}${words.length > 3 ? " · …" : ""}</span>`;
+  }
   async function generate() {
     const T = +g$(".gn-t").value;
     const textEl = g$(".gn-text"), candEl = g$(".gn-cand");
@@ -1916,6 +1949,7 @@ print(prompt)`, "generate.py");
       const words = Object.keys(table), logits = Object.values(table);
       const probs = AI.softmax(logits, T);
       const order = words.map((w, i) => [w, probs[i], i]).sort((a, b) => b[1] - a[1]);
+      gstrip(table);
       candEl.innerHTML = "";
       const bars = {};
       order.forEach(([w, p]) => { const i = DS.el("i", { style: { width: "0%" } }); bars[w] = i; candEl.append(DS.el("span", { class: "w" }, w === "." ? "." : " " + w), DS.el("div", { class: "b" }, i), DS.el("span", { class: "p" }, (p * 100).toFixed(0) + "%")); });
@@ -1936,7 +1970,8 @@ print(prompt)`, "generate.py");
     DS.log(g$(".log"), `T=${T}: "a${DS.esc(out)}"`, "ok");
     g$(".status").innerHTML = "Done. Press <b>Generate</b> again: at temperature 0 you get the same story every time (good for facts and code); at higher temperatures it changes (good for ideas and creative writing).";
   }
-  g$(".gn-t").addEventListener("input", () => (g$(".gn-tv").textContent = (+g$(".gn-t").value).toFixed(1)));
+  g$(".gn-t").addEventListener("input", () => { g$(".gn-tv").textContent = (+g$(".gn-t").value).toFixed(1); if (!gr.dataset.busy) gstrip(ADJ); });
+  gstrip(ADJ);
   g$(".gn-go").onclick = () => DS.run(gr, generate);
   g$(".gn-clear").onclick = () => { if (!gr.dataset.busy) { g$(".gn-text").innerHTML = "Once upon a time, a"; g$(".gn-cand").innerHTML = ""; g$(".log").innerHTML = ""; cp.clear(); } };
   g$(".gn-text").textContent = "Once upon a time, a";
@@ -2120,7 +2155,7 @@ print(prompt)`, "generate.py");
         <button class="secondary always em-q" data-q="1">"how to save money"</button>
         <button class="secondary always em-q" data-q="2">"is it going to rain?"</button>
       </div>
-      <div class="viz" style="min-height:300px"><span class="caption">Sentences placed on a flat map by meaning</span><div class="em-plot" style="padding-top:18px"></div></div>
+      <div class="viz" style="min-height:300px"><span class="caption">Sentences placed on a flat map by meaning</span><div class="fstrip em-fs"></div><div class="em-plot" style="padding-top:18px"></div></div>
       <div class="status"></div>
     </div>
     <div class="card" style="box-shadow:none">
@@ -2148,6 +2183,7 @@ print(prompt)`, "generate.py");
         <button class="secondary rg-no">Ask without RAG</button>
       </div>
       <div class="viz" style="min-height:300px"><span class="caption">Company handbook · 6 chunks in a vector database</span>
+        <div class="fstrip rg-fs"></div>
         <div class="py-row tight rg-chunks" style="padding-top:30px;gap:8px"></div>
         <div class="answerbox rg-prompt" style="margin-top:12px;display:none"></div>
         <div class="answerbox rg-ans" style="margin-top:10px;display:none"></div>
@@ -2206,6 +2242,8 @@ print(prompt)`, "generate.py");
       const [qx, qy] = pos(Q[qi][1]);
       P.g.append(DS.svg("text", { x: P.X(qx), y: P.Y(qy) + 7, "text-anchor": "middle", style: "font:700 20px var(--sans);fill:var(--hot)" }, "★"));
     }
+    e$(".em-fs").innerHTML = "<span>similarity = how alike two arrows' directions are</span><span>1 = same meaning · 0 = unrelated</span>"
+      + (qi != null ? `<span>2 closest: ${top.map(i => scores[i].toFixed(2)).join(" and ")}</span>` : "");
     const tb = e$(".em-table"); tb.innerHTML = "";
     tb.append(DS.el("tr", {}, DS.el("th", {}, "Sentence"), DS.el("th", {}, "Vector"), DS.el("th", {}, qi != null ? "Similarity" : "")));
     const rows = S.map((s, i) => [s, i]).sort((a, b) => (scores ? scores[b[1]] - scores[a[1]] : 0));
@@ -2260,9 +2298,11 @@ answer = llm(prompt)`, "rag.py");
     CH.forEach(([t, txt], i) => { const n = DS.el("span", { class: "node", style: { height: "auto", minHeight: "40px", padding: "6px 10px", font: "12px/1.35 var(--sans)", whiteSpace: "normal", maxWidth: "150px", textAlign: "left", display: "block" }, title: txt }, DS.el("b", { style: { display: "block", fontSize: "11px", color: "var(--text-2)" } }, `note ${i + 1} · ${t}`), txt.slice(0, 48) + (txt.length > 48 ? "…" : "")); chipEls.push(n); box.append(n); });
   }
   const md = s => DS.esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+  // formula strip: the retrieval rule, then the kept notes with their similarity
+  const rstrip = kept => (r$(".rg-fs").innerHTML = "<span>similarity(question, note) for every note</span><span>→ keep the 2 most similar</span>" + (kept ? `<span>${kept}</span>` : ""));
   async function run() {
     const qi = +r$(".rg-q").value, [question, qv, answer] = QS[qi];
-    drawChunks();
+    drawChunks(); rstrip();
     const P = r$(".rg-prompt"), A = r$(".rg-ans"); P.style.display = "none"; A.style.display = "none";
     cp.hl(2, 3); r$(".status").innerHTML = "<b>1. Index:</b> the handbook was split into 6 chunks; each chunk was embedded and stored in the vector database (done once, ahead of time)."; await DS.wait(1.4);
     cp.hl(6); r$(".status").innerHTML = `<b>2. Retrieve:</b> embed the question "${DS.esc(question)}" into a vector…`; await DS.wait(1.1);
@@ -2270,6 +2310,7 @@ answer = llm(prompt)`, "rag.py");
     chipEls.forEach((n, i) => { n.classList.add("active"); n.append(DS.el("small", { style: { display: "block", fontFamily: "var(--mono)", color: "var(--text-2)", marginTop: "2px" } }, "similarity " + scores[i].toFixed(2))); });
     cp.hl(7); r$(".status").innerHTML = "…and compare it with every chunk's vector (cosine similarity)."; await DS.wait(1.3);
     const top = scores.map((s, i) => [s, i]).sort((a, b) => b[0] - a[0]).slice(0, 2).filter(p => p[0] > 0.2).map(p => p[1]);
+    rstrip(top.map(i => `note ${i + 1}: ${scores[i].toFixed(2)}`).join(" · ") + " → kept");
     chipEls.forEach((n, i) => { n.classList.remove("active"); if (top.includes(i)) n.classList.add("visited"); else n.classList.add("dim"); });
     r$(".status").innerHTML = `Keep the top ${top.length}: note${top.length > 1 ? "s" : ""} ${top.map(i => i + 1).join(" and ")}. Notice: "train ticket" matched "travel costs" by <b>meaning</b>.`;
     DS.log(r$(".log"), `retrieved notes ${top.map(i => i + 1).join(", ")}`, "info");
@@ -2286,7 +2327,7 @@ answer = llm(prompt)`, "rag.py");
   }
   async function noRag() {
     const qi = +r$(".rg-q").value;
-    drawChunks(); chipEls.forEach(n => n.classList.add("dim"));
+    drawChunks(); rstrip("without RAG: no notes are retrieved"); chipEls.forEach(n => n.classList.add("dim"));
     const P = r$(".rg-prompt"), A = r$(".rg-ans"); P.style.display = "none";
     cp.hl(17);
     A.style.display = ""; A.innerHTML = ""; A.style.borderColor = "var(--hot)";
@@ -2296,7 +2337,7 @@ answer = llm(prompt)`, "rag.py");
   }
   r$(".rg-go").onclick = () => DS.run(rr, run);
   r$(".rg-no").onclick = () => DS.run(rr, noRag);
-  drawChunks();
+  drawChunks(); rstrip();
   r$(".status").innerHTML = "Pick a question and press <b>Run RAG</b>. Then compare with <b>Ask without RAG</b>.";
 
   DS.quiz(document.querySelector("#rag .quizbox"), [

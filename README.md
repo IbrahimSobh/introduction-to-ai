@@ -49,7 +49,7 @@ It isn't aimed at ML engineers or data scientists looking for maths, real traini
 
 ## What each lesson gives you
 
-- **A clear explanation** of the main idea, with an everyday analogy, simple diagrams and comparison tables.
+- **A clear explanation** of the main idea, with an everyday analogy, simple diagrams and comparison tables. Where a demo works out numbers (house prices, errors, a neuron, tokens, word chances, similarity), a formula strip above it shows the rule in plain words with the current values.
 - **Interactive demos** you drive yourself: train a model, watch a neural network learn, split text into tokens, sample with temperature, build a prompt, run RAG over a handbook, step through an agent loop, and test defences against prompt injection.
 - **Short code sketches** beside each demo, with the step being run highlighted, so you see how the idea is used in practice.
 - **A quiz in every lesson** (30 questions in total), plus an AI glossary to revise from.

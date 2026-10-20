@@ -12,6 +12,14 @@ A **self-paced online course, completely free**, that explains how modern AI wor
 
 [![Course path: Part A foundations (what is AI, learning from data, neural networks), Part B generative AI in practice (LLMs, prompt engineering, RAG, AI agents, MCP and skills, fine-tuning, limits and risks), the final quiz, then your certificate](images/course-overview.png)](https://ibrahimsobh.github.io/introduction-to-ai/)
 
+## 🎞️ Presenting it? Use the slides: [ibrahimsobh.github.io/introduction-to-ai/slides.html](https://ibrahimsobh.github.io/introduction-to-ai/slides.html)
+
+**26 ready-to-present slides** that follow the course: one key message and a clear diagram per topic, with 🗣️ speaker notes. Made for teachers, trainers and anyone giving a talk on AI.
+
+⌨️ **←** / **→** move · **N** speaker notes · **T** light or dark · **F** full screen · 🖨️ **Ctrl + P** save as PDF
+
+[![Slide 18 of the Introduction to AI slides: RAG: retrieve, augment, generate, with a diagram of the question, embed, vector database, top 2 chunks, prompt, LLM and answer with sources, and the key insight that RAG keeps knowledge outside the model](images/slides-preview.png)](https://ibrahimsobh.github.io/introduction-to-ai/slides.html)
+
 ## What you'll learn
 
 - How machines learn from data, from a simple line to neural networks and LLMs.

@@ -7,7 +7,7 @@
 <script>
 (() => {
   let t = null; try { t = localStorage.getItem("ai-slides-theme"); } catch (e) {}
-  if (t !== "light" && t !== "dark") t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  if (t !== "light" && t !== "dark") t = "light";   // light by default; T switches and the choice is remembered
   document.documentElement.dataset.theme = t;
 })();
 </script>

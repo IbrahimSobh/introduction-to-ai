@@ -81,6 +81,10 @@ table.tb { border-collapse: collapse; width: 100%; font-size: 17px; line-height:
 .part span { color: var(--text-2); font-size: 18px; }
 .byline { margin-top: 34px; font-size: 19px; color: var(--text-2); }
 .byline b { color: var(--text); }
+.slide a { color: inherit; text-decoration: none; border-bottom: 1px solid color-mix(in srgb, currentColor 35%, transparent); }
+.slide a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.gh { margin-top: 18px; font-size: 18px; color: var(--text-2); }
+.gh a { color: var(--accent); font-weight: 650; }
 .slide.divider { justify-content: center; padding: 64px 96px; }
 .slide.divider .big { font-size: 22px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
 .slide.divider.b .big { color: var(--hot); }
@@ -156,7 +160,7 @@ body.notes #notes { display: block; }
     <div class="part"><b>Part A · Foundations</b><span>how machines learn</span></div>
     <div class="part b"><b>Part B · Generative AI in practice</b><span>LLMs, prompts, RAG, agents, MCP, fine-tuning, risks</span></div>
   </div>
-  <div class="byline"><b>Ibrahim Sobh, PhD</b> · ibrahimsobh.github.io/introduction-to-ai</div>
+  <div class="byline"><b><a href="https://www.linkedin.com/in/ibrahim-sobh-phd-8681757/" target="_blank" rel="noopener">Ibrahim Sobh, PhD</a></b> · <a href="https://ibrahimsobh.github.io/introduction-to-ai/" target="_blank" rel="noopener">ibrahimsobh.github.io/introduction-to-ai</a></div>
   <div class="notes-src">Part A builds the vocabulary. Part B is the main focus: how LLMs work and how to build useful, safe systems with them.</div>
 </section>
 
@@ -581,11 +585,12 @@ body.notes #notes { display: block; }
   <div class="closing">
     <div class="txt">
       <p style="font-size:24px;margin-bottom:2px"><b>Introduction to AI</b>: a free, self-paced interactive course</p>
-      <div class="url">ibrahimsobh.github.io/introduction-to-ai</div>
+      <div class="url"><a href="https://ibrahimsobh.github.io/introduction-to-ai/" target="_blank" rel="noopener" style="border:0">ibrahimsobh.github.io/introduction-to-ai</a></div>
       <ul>
         <li>Every idea in this talk has a live demo you can drive: train a line, watch a network learn, sample tokens, run RAG, step through an agent</li>
         <li>No sign-up, runs in your browser. Pass the final quiz (10 of 12) for a free certificate</li>
       </ul>
+      <p class="gh"><a href="https://github.com/IbrahimSobh/introduction-to-ai" target="_blank" rel="noopener">Source on GitHub</a> · ⭐ Star the repo if you found it useful.</p>
     </div>
     <div class="dg" data-dg="closing"></div>
   </div>

@@ -18,6 +18,8 @@ A **self-paced online course, completely free**, that explains how modern AI wor
 
 ⌨️ **←** / **→** move · **N** speaker notes · **T** light or dark · **F** full screen · 🖨️ **Ctrl + P** save as PDF
 
+📄 **[Download the slides as PDF](https://ibrahimsobh.github.io/introduction-to-ai/introduction-to-ai-slides.pdf)** (26 pages, one slide per page, clickable links)
+
 [![Slide 18 of the Introduction to AI slides: RAG: retrieve, augment, generate, with a diagram of the question, embed, vector database, top 2 chunks, prompt, LLM and answer with sources, and the key insight that RAG keeps knowledge outside the model](images/slides-preview.png)](https://ibrahimsobh.github.io/introduction-to-ai/slides.html)
 
 ## What you'll learn

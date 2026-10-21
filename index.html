@@ -2170,6 +2170,14 @@ print(prompt)`, "generate.py");
   <p><b>Size matters:</b> chunks that are too big bring in unrelated text and waste the context window; chunks that are too small lose meaning, like cutting a recipe in the middle of a step. A few paragraphs, with a little overlap, is a common starting point.</p>
 
   <h3>The flow: retrieve, augment, generate</h3>
+  <p>The demo puts it all together with a small company handbook of 6 notes. Pick a question and press <b>Run RAG</b> to follow the four steps:</p>
+  <ol>
+    <li><b>Index</b> (done once, ahead of time): split the handbook into chunks, embed each chunk and store it in the vector database.</li>
+    <li><b>Retrieve</b>: embed the question, compare it with every chunk by cosine similarity, and keep the 2 closest chunks.</li>
+    <li><b>Augment</b>: paste those chunks into the prompt, with an instruction to answer only from them.</li>
+    <li><b>Generate</b>: the LLM writes the answer from your documents and names its source.</li>
+  </ol>
+  <p>Then press <b>Ask without RAG</b> to compare: the same question, but the model has never seen the handbook.</p>
   <div class="w-rag">
   <div class="grid2">
     <div class="card">
@@ -2527,7 +2535,12 @@ while steps < 10:
   <h2>8. MCP and Skills <small style="color:var(--muted);font-weight:500">(access and know-how)</small></h2>
   <p class="lead"><b>MCP</b> (Model Context Protocol) is an <b>open standard</b> (a shared, public set of rules anyone may use) for connecting AI applications to <b>tools and data</b>. <b>Skills</b> are packaged instructions that teach an agent <b>how to do a task</b>. MCP gives the agent access; Skills give it know-how.</p>
   <p>Think of a new employee. MCP is their set of <b>keys and logins</b>: the shared code folder, the sales records, the calendar. Skills are the team's <b>how-to guides</b>: "this is how we write release notes". Keys without guides lead to messy work; guides without keys can't get anything done.</p>
-  <p>The diagram below shows an AI app (left) connected to three outside systems (right) through MCP, plus three skills. The words client, server and host are explained under the demo. Task 1 is a software team's job: writing <b>release notes</b> (a short list of what changed in a new version, here v2.0). The changes are stored on <b>GitHub</b>, a website where teams keep their code; each change is called a <b>pull request (PR)</b>.</p>
+  <p>The diagram below shows an AI app (left) connected to three outside systems (right) through MCP, plus three skills. The words client, server and host are explained under the demo. Pick one of three tasks:</p>
+  <ol>
+    <li><b>Write release notes for v2.0.</b> A software team's job: <b>release notes</b> are a short list of what changed in a new version. The changes are stored on <b>GitHub</b>, a website where teams keep their code; each change is called a <b>pull request (PR)</b>. The release-notes skill gives the team's format, and the GitHub server lists the changes.</li>
+    <li><b>How many orders did we get yesterday?</b> The data-report skill says never to guess numbers, so the agent asks the company's Orders database through its MCP server. The question to the database is written in <b>SQL</b>, the standard language for asking a database for data: <code>SELECT COUNT(*) FROM orders WHERE day = yesterday</code> means "count yesterday's orders".</li>
+    <li><b>Am I free on Thursday afternoon?</b> A simple check: no skill matches, so the agent just uses the calendar server's tool. Not every task needs a skill.</li>
+  </ol>
 
   <div class="w-mcp">
   <div class="grid2">
@@ -2909,19 +2922,26 @@ if reply.tool_call and is_risky(reply.tool_call):
     ["Foundations", "#whatis", "Artificial intelligence (AI)", "building systems that do tasks linked to human intelligence"],
     ["Foundations", "#whatis", "Machine learning (ML)", "the part of AI where systems learn patterns from data"],
     ["Foundations", "#whatis", "Supervised / unsupervised / reinforcement", "learning from labelled examples / unlabelled data / rewards"],
+    ["Foundations", "#whatis", "Clustering", "unsupervised learning that sorts examples into groups of similar ones"],
     ["Foundations", "#whatis", "Classification / regression", "predicting a category / predicting a number; object detection does both"],
     ["Foundations", "#data", "Model, parameters", "a formula; the numbers that set its shape, like a and b in y = a·x + b"],
     ["Foundations", "#data", "Training, prediction", "finding the best parameter values from data; using the trained model on new cases"],
     ["Foundations", "#data", "Overfitting / underfitting", "memorising the training data / too simple to learn the pattern"],
+    ["Foundations", "#data", "Training set / test set", "the examples the model learns from / examples kept aside to check it on data it has never seen"],
     ["Foundations", "#nn", "Neural network, weights, biases", "layers of neurons; its parameters, adjusted during training"],
+    ["Foundations", "#nn", "Hidden layer, activation function", "the layers between input and output; the function each neuron uses to bend its result"],
+    ["Foundations", "#nn", "Backpropagation", "working out how much each weight contributed to the error"],
+    ["Foundations", "#nn", "Epoch", "one pass through all the training examples"],
     ["Foundations", "#nn", "Gradient descent", "training step by step: nudge every parameter a little to reduce the error, many times"],
     ["Foundations", "#nn", "Deep learning", "neural networks with many layers"],
+    ["Foundations", "#nn", "GPU", "a graphics chip that does thousands of simple calculations at the same time, used to train large models"],
     ["LLMs", "#llm", "Generative AI", "AI that creates new text, images, audio or code"],
     ["LLMs", "#llm", "Multimodal model", "a model that can read or create more than one kind of data: text, images, audio"],
     ["LLMs", "#llm", "Large language model (LLM)", "a huge neural network trained to predict the next token"],
     ["LLMs", "#llm", "Token", "a chunk of text; about 4 characters in English"],
     ["LLMs", "#llm", "Context window", "the most tokens a model can handle at once, answer included"],
-    ["LLMs", "#llm", "Pre-training / instruction tuning", "learning from huge text / learning to follow instructions"],
+    ["LLMs", "#llm", "Pre-training / instruction tuning / preference tuning", "learning from huge text / learning to follow instructions / learning from people's ratings of answers (e.g. RLHF)"],
+    ["LLMs", "#llm", "Base model", "a pre-trained model that continues text but doesn't reliably follow instructions"],
     ["LLMs", "#llm", "Transformer, attention", "the network design most LLMs use; attention = weighing which tokens matter for each other"],
     ["LLMs", "#llm", "Temperature", "how random the token choices are: low = consistent, high = varied"],
     ["Prompting", "#prompt", "System prompt, role", "instructions that set the model's job, tone and rules"],
@@ -2930,6 +2950,7 @@ if reply.tool_call and is_risky(reply.tool_call):
     ["Prompting", "#prompt", "Context engineering", "choosing everything the model sees: instructions, documents, tools, memories, history"],
     ["RAG", "#rag", "RAG", "retrieve relevant chunks, add them to the prompt, generate the answer"],
     ["RAG", "#rag", "Embedding", "a vector of numbers that captures a text's meaning"],
+    ["RAG", "#rag", "Cosine similarity", "how alike two vectors' directions are: 1 = same direction (same meaning), 0 = unrelated"],
     ["RAG", "#rag", "Chunking, vector database", "splitting documents into pieces; storing and searching their vectors"],
     ["Agents", "#agents", "AI agent", "an LLM plus a harness, using tools in a loop toward a goal"],
     ["Agents", "#agents", "Harness", "the program around the LLM: offers and runs tools, runs the loop, manages context, memory and safety"],
@@ -2939,6 +2960,7 @@ if reply.tool_call and is_risky(reply.tool_call):
     ["MCP & Skills", "#mcp", "MCP (Model Context Protocol)", "an open standard connecting AI apps (clients) to tools and data (servers)"],
     ["MCP & Skills", "#mcp", "Skill", "a folder with SKILL.md instructions that teaches an agent a task"],
     ["Fine-tuning", "#finetune", "Fine-tuning", "extra training on your examples to specialise a model"],
+    ["Fine-tuning", "#finetune", "LoRA", "a popular efficient fine-tuning method that updates only a small part of the model"],
     ["Fine-tuning", "#finetune", "Prompting vs RAG vs fine-tuning", "instructions / knowledge / behaviour"],
     ["Risks", "#risks", "Hallucination", "a confident answer that is false or made up"],
     ["Risks", "#risks", "Bias", "unfair patterns learned from data"],
